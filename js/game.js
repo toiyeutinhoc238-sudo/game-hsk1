@@ -12,21 +12,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // Game State
     let currentIdx = 0;
     let playerCorrect = 0;
-    let botCorrect = 0;
     let isGameOver = false;
     let canAnswer = false;
-    let botTimer;
     let questionTimer;
     let timeLeft = 15;
     let playerChoice = null;
-    let botChoice = null;
     let isEvaluating = false;
 
     // DOM Elements
     const questionText = document.getElementById('questionText');
     const optionsGrid = document.getElementById('optionsGrid');
     const playerProgress = document.getElementById('playerProgress');
-    const botProgress = document.getElementById('botProgress');
     const questionNum = document.getElementById('questionNum');
     const resultModal = document.getElementById('resultModal');
     const resultTitle = document.getElementById('resultTitle');
@@ -48,9 +44,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function updateProgress() {
-        const total = 10;
+        const total = questions.length;
         playerProgress.style.width = `${(playerCorrect / total) * 100}%`;
-        botProgress.style.width = `${(botCorrect / total) * 100}%`;
     }
 
     function startInitialCountdown() {
@@ -91,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function loadQuestion() {
-        if (currentIdx >= questions.length || playerCorrect >= 10 || botCorrect >= 10) {
+        if (currentIdx >= questions.length) {
             endGame();
             return;
         }
@@ -99,11 +94,10 @@ document.addEventListener('DOMContentLoaded', () => {
         canAnswer = true;
         isEvaluating = false;
         playerChoice = null;
-        botChoice = null;
-        statusMsg.textContent = 'Đợi người chơi chọn...';
+        statusMsg.textContent = 'Hãy chọn đáp án đúng!';
         
         const q = questions[currentIdx];
-        questionNum.textContent = `Câu ${currentIdx + 1}/10`;
+        questionNum.textContent = `Câu ${currentIdx + 1}/${questions.length}`;
         questionText.textContent = q.q;
         optionsGrid.innerHTML = '';
 
@@ -111,41 +105,27 @@ document.addEventListener('DOMContentLoaded', () => {
             const btn = document.createElement('button');
             btn.className = 'option-btn';
             btn.textContent = option;
-            btn.onclick = () => handleChoice(idx, false);
+            btn.onclick = () => handleChoice(idx);
             optionsGrid.appendChild(btn);
         });
 
         startQuestionTimer();
-        startBotBrain();
     }
 
-    function handleChoice(idx, isBot) {
+    function handleChoice(idx) {
         if (!canAnswer || isGameOver || isEvaluating) return;
 
         const buttons = optionsGrid.querySelectorAll('.option-btn');
         
-        if (isBot) {
-            if (botChoice !== null) return;
-            botChoice = idx;
-            const marker = document.createElement('span');
-            marker.className = 'marker marker-bot';
-            marker.textContent = '🤖';
-            buttons[idx].appendChild(marker);
-            buttons[idx].classList.add('bot-selected');
-        } else {
-            if (playerChoice !== null) return;
-            playerChoice = idx;
-            const marker = document.createElement('span');
-            marker.className = 'marker marker-player';
-            marker.textContent = '👤';
-            buttons[idx].appendChild(marker);
-            buttons[idx].classList.add('player-selected');
-            statusMsg.textContent = 'Bạn đã chọn, đang đợi Robot...';
-        }
-
-        if (playerChoice !== null && botChoice !== null) {
-            evaluateTurn();
-        }
+        if (playerChoice !== null) return;
+        playerChoice = idx;
+        const marker = document.createElement('span');
+        marker.className = 'marker marker-player';
+        marker.textContent = '👤';
+        buttons[idx].appendChild(marker);
+        buttons[idx].classList.add('player-selected');
+        
+        evaluateTurn();
     }
 
     function evaluateTurn() {
@@ -153,40 +133,38 @@ document.addEventListener('DOMContentLoaded', () => {
         isEvaluating = true;
         canAnswer = false;
         clearInterval(questionTimer);
-        clearTimeout(botTimer);
 
-        statusMsg.textContent = 'Đang kiểm tra đáp án... (3s)';
+        statusMsg.textContent = 'Đang kiểm tra đáp án...';
         
         const q = questions[currentIdx];
         const buttons = optionsGrid.querySelectorAll('.option-btn');
 
         // Scoring
-        if (playerChoice === q.correct) playerCorrect++;
-        if (botChoice === q.correct) botCorrect++;
+        if (playerChoice === q.correct) {
+            playerCorrect++;
+            statusMsg.textContent = 'CHÍNH XÁC!';
+            statusMsg.style.color = 'var(--success)';
+        } else {
+            statusMsg.textContent = 'CHƯA ĐÚNG RỒI!';
+            statusMsg.style.color = 'var(--error)';
+        }
 
         // Reveal correct/wrong
         buttons.forEach((btn, idx) => {
             if (idx === q.correct) {
                 btn.classList.add('correct');
-            } else if (idx === playerChoice || idx === botChoice) {
+            } else if (idx === playerChoice) {
                 btn.classList.add('wrong');
             }
         });
 
         updateProgress();
-        setTimeout(nextQuestion, 3000);
+        setTimeout(() => {
+            statusMsg.style.color = 'var(--accent)';
+            nextQuestion();
+        }, 1500);
     }
 
-    function startBotBrain() {
-        // Bot responds between 2 and 12 seconds randomly
-        const delay = Math.random() * 10000 + 2000;
-        
-        botTimer = setTimeout(() => {
-            if (isGameOver || isEvaluating) return;
-            const randomIdx = Math.floor(Math.random() * 4);
-            handleChoice(randomIdx, true);
-        }, delay);
-    }
 
     function nextQuestion() {
         if (isGameOver) return;
@@ -197,21 +175,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function endGame() {
         isGameOver = true;
         clearInterval(questionTimer);
-        clearTimeout(botTimer);
         resultModal.style.display = 'flex';
 
-        if (playerCorrect >= 10 || playerCorrect > botCorrect) {
-            resultTitle.textContent = 'CHÚC MỪNG CHIẾN THẮNG!';
-            resultTitle.style.color = 'var(--success)';
-            resultMessage.textContent = `Bạn đã đánh bại Robot với tỉ số ${playerCorrect} - ${botCorrect}!`;
-        } else if (botCorrect >= 10 || botCorrect > playerCorrect) {
-            resultTitle.textContent = 'ROBOT CHIẾN THẮNG';
-            resultTitle.style.color = 'var(--error)';
-            resultMessage.textContent = `Rất tiếc! Robot đã về đích trước. Tỉ số: ${playerCorrect} - ${botCorrect}`;
-        } else {
-            resultTitle.textContent = 'BẤT PHÂN THẮNG BẠI';
-            resultMessage.textContent = 'Trận đấu kết thúc với kết quả Hòa!';
-        }
+        resultTitle.textContent = 'BÀI HỌC KẾT THÚC';
+        resultMessage.textContent = `Bạn đã hoàn thành với số câu đúng: ${playerCorrect}/${questions.length}. Hãy tiếp tục cố gắng nhé!`;
     }
 
     startInitialCountdown();

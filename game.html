@@ -10,19 +10,10 @@
 <body>
     <div class="container game-arena">
         <div class="battle-header glass">
-            <div class="player-stats player">
-                <span id="playerName">Bạn (Người Chơi)</span>
+            <div class="player-stats player" style="width: 100%; text-align: center;">
+                <span id="playerName" style="font-size: 1.2rem; font-weight: 600;">Tiến độ bài học</span>
                 <div class="progress-container">
                     <div class="progress-bar" id="playerProgress"></div>
-                </div>
-            </div>
-            
-            <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent);">VS</div>
-
-            <div class="player-stats bot" style="text-align: right;">
-                <span id="botName">Robot (Đối Thủ)</span>
-                <div class="progress-container">
-                    <div class="progress-bar" id="botProgress" style="float: right;"></div>
                 </div>
             </div>
         </div>
@@ -45,8 +36,8 @@
     <!-- Result Modal -->
     <div id="resultModal" class="modal">
         <div class="glass modal-content" style="max-height: 90vh; overflow: auto;">
-            <h1 id="resultTitle" style="font-size: 2.5rem; margin-bottom: 1rem;">WINNER</h1>
-            <p id="resultMessage" style="font-size: 1.2rem; margin-bottom: 2rem;">Bạn đã chiến thắng Bot!</p>
+            <h1 id="resultTitle" style="font-size: 2.5rem; margin-bottom: 1rem;">HOÀN THÀNH!</h1>
+            <p id="resultMessage" style="font-size: 1.2rem; margin-bottom: 2rem;">Chúc mừng bạn đã hoàn thành bài học!</p>
             
             <div style="text-align: left; background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 12px;">
                 <h3 style="color: var(--secondary); margin-bottom: 1rem;">Củng cố từ vựng Bài <span id="lessonNumReview">X</span>:</h3>
