@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HSK Battle Arena</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/questions.js"></script>
+</head>
+<body>
+    <div class="container game-arena">
+        <div class="battle-header glass">
+            <div class="player-stats player">
+                <span id="playerName">Bạn (Người Chơi)</span>
+                <div class="progress-container">
+                    <div class="progress-bar" id="playerProgress"></div>
+                </div>
+            </div>
+            
+            <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent);">VS</div>
+
+            <div class="player-stats bot" style="text-align: right;">
+                <span id="botName">Robot (Đối Thủ)</span>
+                <div class="progress-container">
+                    <div class="progress-bar" id="botProgress" style="float: right;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="timerContainer" class="timer-container">
+            <div id="timerBar" class="timer-bar"></div>
+        </div>
+
+        <div id="statusMsg" class="status-msg"></div>
+
+        <div class="question-container glass">
+            <p id="questionNum" style="color: var(--secondary); margin-bottom: 1rem; font-weight: 600;">Câu 1/10</p>
+            <h2 class="question-text" id="questionText">Đang tải câu hỏi...</h2>
+            <div class="options-grid" id="optionsGrid">
+                <!-- Options will be generated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Result Modal -->
+    <div id="resultModal" class="modal">
+        <div class="glass modal-content" style="max-height: 90vh; overflow: auto;">
+            <h1 id="resultTitle" style="font-size: 2.5rem; margin-bottom: 1rem;">WINNER</h1>
+            <p id="resultMessage" style="font-size: 1.2rem; margin-bottom: 2rem;">Bạn đã chiến thắng Bot!</p>
+            
+            <div style="text-align: left; background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 12px;">
+                <h3 style="color: var(--secondary); margin-bottom: 1rem;">Củng cố từ vựng Bài <span id="lessonNumReview">X</span>:</h3>
+                <div id="reviewList" class="review-list">
+                    <!-- Review items -->
+                </div>
+            </div>
+            
+            <div style="margin-top: 2.5rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <button class="btn-primary" onclick="window.location.reload()">Chơi Lại</button>
+                <button class="btn-primary" style="background: var(--secondary);" onclick="window.location.href='index.html'">Quay Lại Trang Chủ</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="startCountdown" class="modal" style="display: none; background: rgba(15, 23, 42, 0.95);">
+        <h1 id="countdownText" style="font-size: 10rem; color: var(--accent); text-shadow: 0 0 30px var(--accent);">3</h1>
+    </div>
+
+    <script src="js/game.js"></script>
+</body>
+</html>
