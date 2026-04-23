@@ -1,0 +1,56 @@
+BÁO CÁO NGHIÊN CỨU KHOA HỌC: XÂY DỰNG ỨNG DỤNG TRÒ CHƠI TƯƠNG TÁC HỖ TRỢ HỌC TẬP TỪ VỰNG TIẾNG TRUNG (HSK 1 - HSK 3)
+
+Tên đề tài: "Ứng dụng Gamification trong việc nâng cao hiệu quả ghi nhớ từ vựng cho người mới bắt đầu học Tiếng Trung"
+
+--------------------------------------------------------------------------------
+1. GIỚI THIỆU CHUNG
+Trong bối cảnh hội nhập quốc tế, nhu cầu học tiếng Trung tại Việt Nam ngày càng tăng cao. Tuy nhiên, việc ghi nhớ hệ thống chữ Hán và từ vựng của các cấp độ HSK (Hanyu Shuiping Kaoshi) luôn là thách thức lớn đối với người học, đặc biệt là giai đoạn sơ cấp (HSK 1-3). Các phương pháp học truyền thống đôi khi gây cảm giác khô khan và thiếu tính tương tác.
+
+Nghiên cứu này tập trung vào việc thiết kế và phát triển một hệ thống ứng dụng web-based sử dụng phương pháp "Gamification" (Trò chơi hóa) để biến quá trình học từ vựng thành một trải nghiệm giải trí, giúp tăng khả năng ghi nhớ và duy trì động lực cho người học.
+
+2. MỤC TIÊU NGHIÊN CỨU
+- Xây dựng một nền tảng học tập trực quan, dễ tiếp cận trên trình duyệt.
+- Tối ưu hóa quy trình học từ vựng thông qua các thử thách thời gian và logic trò chơi.
+- Cung cấp tính năng ôn tập ngay sau khi kết thúc các lượt chơi để củng cố kiến thức.
+
+3. ĐỐI TƯỢNG VÀ PHƯƠNG PHÁP NGHIÊN CỨU
+- Đối tượng: Người học tiếng Trung trình độ sơ cấp (HSK 1, 2, 3).
+- Công nghệ sử dụng: HTML5, CSS3 (Vanilla CSS), JavaScript (ES6+).
+- Phương pháp: 
+    + Thiết kế giao diện theo phong cách hiện đại (Glassmorphism), tối ưu hóa trải nghiệm người dùng (UX).
+    + Ứng dụng các cơ chế trò chơi: Giới hạn thời gian (Timer), Thanh tiến trình (Progress Bar), Phản hồi tức thì (Instant Feedback).
+
+4. MÔ TẢ SẢN PHẨM (KẾT QUẢ NGHIÊN CỨU)
+Hệ thống bao gồm các module trò chơi đặc thù cho từng cấp độ:
+
+4.1. HSK 1: "Quiz Battle - Đại Chiến Từ Vựng"
+- Cơ chế: Người học đối mặt với các câu hỏi trắc nghiệm đa lựa chọn.
+- Tính năng nổi bật: 
+    + Hệ thống đếm ngược 15 giây cho mỗi câu hỏi nhằm tăng áp lực phản xạ.
+    + Chỉ số tiến trình (Progress Bar) giúp người học theo dõi mức độ hoàn thành bài học.
+    + Phần "Review" cuối game liệt kê lại toàn bộ từ vựng trong bài để ghi nhớ sâu.
+
+4.2. HSK 2: "Ai Là Triệu Phú - Millionaire Game"
+- Cơ chế: Mô phỏng gameshow nổi tiếng để tạo cảm giác hồi hộp.
+- Tính năng: Sử dụng các quyền trợ giúp (50/50), các mốc quan trọng và nhạc nền kịch tính để duy trì sự tập trung cao độ.
+
+4.3. HSK 3: "Phù Thủy Chế Thuốc - Poison Bottle"
+- Cơ chế: Trò chơi mang tính chiến thuật, kết hợp giữa việc học từ vựng và tư duy logic đặt "bình thuốc độc".
+- Tính năng: Chế độ chơi nhiều người (Multiplayer) hoặc đấu với máy, tạo môi trường học tập mang tính cạnh tranh lành mạnh.
+
+5. ĐÁNH GIÁ TÍNH MỚI VÀ TÍNH SÁNG TẠO
+- Giao diện Premium: Sử dụng hiệu ứng mờ nhám (Glassmorphism), màu sắc hài hòa và hiệu ứng chuyển cảnh (transition) mượt mà, vượt xa các ứng dụng flashcard đơn thuần.
+- Tính tương tác cao: Người học không chỉ đọc-chép mà phải tham gia vào các quyết định thực tế trong game (chọn đáp án, đặt bình thuốc, quản lý thời gian).
+- Khả năng mở rộng: Cấu trúc dữ liệu (JSON) linh hoạt, dễ dàng cập nhật thêm bài học và từ vựng mới mà không cần chỉnh sửa sâu vào logic cốt lõi.
+
+6. KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN
+Sản phẩm đã giải quyết thành công bài toán "học mà chơi, chơi mà học". Kết quả bước đầu cho thấy người học có xu hướng dành nhiều thời gian hơn cho việc luyện tập từ vựng khi có sự xuất hiện của các yếu tố trò chơi.
+
+Hướng phát triển tương lai:
+- Tích hợp công nghệ nhận diện giọng nói (Speech Recognition) để kiểm tra phát âm.
+- Xây dựng hệ thống bảng xếp hạng trực tuyến (Leaderboard) để kết nối cộng đồng người học.
+- Phát triển ứng dụng trên nền tảng di động (Cross-platform).
+
+--------------------------------------------------------------------------------
+Người thực hiện: [Tên của bạn/Nhóm phát triển]
+Thời gian hoàn thành: Tháng 4, Năm 2026
