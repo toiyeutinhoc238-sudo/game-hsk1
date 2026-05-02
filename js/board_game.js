@@ -151,13 +151,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         let rollInterval = setInterval(() => {
-            const tempVal = Math.floor(Math.random() * 6) + 1;
+            const tempVal = Math.floor(Math.random() * 4) + 1;
             renderDice(tempVal);
         }, 100);
 
         setTimeout(() => {
             clearInterval(rollInterval);
-            diceValue = Math.floor(Math.random() * 6) + 1;
+            diceValue = Math.floor(Math.random() * 4) + 1;
             renderDice(diceValue);
             diceFace.classList.remove('rolling');
             
@@ -262,8 +262,8 @@ document.addEventListener('DOMContentLoaded', () => {
         stepsRemaining--;
         updatePositions();
 
-        // Check for immediate win (Police catches Thief)
-        if (policePos === thiefPos) {
+        // Check for immediate win
+        if (policePos === thiefPos || (currentTurn === 'thief' && thiefPos === 34)) {
             document.querySelectorAll('.tile').forEach(t => t.classList.remove('reachable'));
             checkWinCondition();
             return;
