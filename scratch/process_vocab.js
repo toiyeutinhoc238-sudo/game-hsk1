@@ -19,6 +19,17 @@ try {
         const word = String(row[3] || "").trim();
         if (!word) return null;
 
+        const pinyin = String(row[5] || "").trim();
+        // Remove tones and spaces to check for "nage" and "naxie"
+        const pinyinClean = pinyin.toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/\s+/g, "");
+            
+        if (pinyinClean === "nage" || pinyinClean === "naxie") {
+            return null;
+        }
+
         let topic = String(row[7] || "").trim();
         // Clean up topic name (remove trailing colons etc)
         topic = topic.replace(/:$/, '').trim();
@@ -26,7 +37,7 @@ try {
         return {
             word: word,
             type: String(row[4] || "").trim(),
-            pinyin: String(row[5] || "").trim(),
+            pinyin: pinyin,
             meaning: String(row[6] || "").replace(/\r?\n/g, ' ').trim(),
             topic: topic
         };

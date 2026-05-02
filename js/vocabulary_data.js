@@ -945,13 +945,6 @@ const hsk1Vocab = [
     "topic": "7. Địa điểm & Nơi chốn"
   },
   {
-    "word": "哪个",
-    "type": "Đại từ",
-    "pinyin": "nǎge",
-    "meaning": "cái nào",
-    "topic": "14. Công cụ ngữ pháp & Cấu trúc"
-  },
-  {
     "word": "哪里",
     "type": "Đại từ",
     "pinyin": "nǎlǐ",
@@ -964,13 +957,6 @@ const hsk1Vocab = [
     "pinyin": "nǎr",
     "meaning": "Ở đâu",
     "topic": "7. Địa điểm & Nơi chốn"
-  },
-  {
-    "word": "哪些",
-    "type": "Đại từ",
-    "pinyin": "nǎxiē",
-    "meaning": "những cái nào",
-    "topic": "14. Công cụ ngữ pháp & Cấu trúc"
   },
   {
     "word": "那",
@@ -987,13 +973,6 @@ const hsk1Vocab = [
     "topic": "9. Không gian & Vị trí"
   },
   {
-    "word": "那个",
-    "type": "Đại từ",
-    "pinyin": "nàge",
-    "meaning": "cái đó",
-    "topic": "9. Không gian & Vị trí"
-  },
-  {
     "word": "那里",
     "type": "Đại từ",
     "pinyin": "nàlǐ",
@@ -1006,13 +985,6 @@ const hsk1Vocab = [
     "pinyin": "nàr",
     "meaning": "ở đó",
     "topic": "7. Địa điểm & Nơi chốn"
-  },
-  {
-    "word": "那些",
-    "type": "Đại từ",
-    "pinyin": "nàxiē",
-    "meaning": "Những cái đó",
-    "topic": "14. Công cụ ngữ pháp & Cấu trúc"
   },
   {
     "word": "男",
