@@ -1,0 +1,355 @@
+:root {
+    --tile-size: 100px;
+    --grid-gap: 10px;
+    --board-bg: #1e293b;
+    --thief-color: #f59e0b;
+    --police-color: #3b82f6;
+}
+
+.board-game-body {
+    background-image: url('../assets/board_bg.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden;
+    font-family: 'Inter', sans-serif;
+}
+
+.game-layout {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* Sidebar */
+.game-sidebar {
+    width: 300px;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(20px);
+}
+
+.turn-badge {
+    padding: 1rem;
+    border-radius: 12px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.thief-turn {
+    background: var(--thief-color);
+    color: #000;
+}
+
+.police-turn {
+    background: var(--police-color);
+    color: #fff;
+}
+
+.dice-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.dice-container {
+    width: 120px;
+    height: 120px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.dice-container:active {
+    transform: scale(0.9);
+}
+
+.rolling {
+    animation: diceRoll 0.5s infinite;
+}
+
+@keyframes diceRoll {
+    0% { transform: rotate(0deg) scale(1); }
+    25% { transform: rotate(90deg) scale(1.1); }
+    50% { transform: rotate(180deg) scale(1); }
+    75% { transform: rotate(270deg) scale(1.1); }
+    100% { transform: rotate(360deg) scale(1); }
+}
+
+/* Stats */
+.stat-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+}
+
+.stat-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.progress-mini {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    margin-top: 5px;
+    overflow: hidden;
+}
+
+.progress-mini div {
+    height: 100%;
+    transition: width 0.5s ease;
+}
+
+#thiefProgress { background: var(--thief-color); }
+#policeProgress { background: var(--police-color); }
+
+/* Board */
+.board-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 2rem;
+}
+
+.board-grid {
+    display: grid;
+    grid-template-columns: repeat(7, var(--tile-size));
+    grid-template-rows: repeat(5, var(--tile-size));
+    gap: var(--grid-gap);
+    background: rgba(15, 23, 42, 0.4);
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+    position: relative;
+    backdrop-filter: blur(5px);
+}
+
+.tile {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 0.8rem;
+    text-align: center;
+    padding: 5px;
+    transition: all 0.3s;
+    position: relative;
+    grid-area: auto;
+}
+
+.tile.active-thief { background: rgba(245, 158, 11, 0.2); border-color: var(--thief-color); }
+.tile.active-police { background: rgba(59, 130, 246, 0.2); border-color: var(--police-color); }
+
+.tile.reachable {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: var(--accent);
+    cursor: pointer;
+    box-shadow: 0 0 15px var(--accent);
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.tile-char { font-size: 1.2rem; font-weight: bold; margin-bottom: 5px; color: var(--accent); }
+.tile-pinyin { font-size: 0.7rem; opacity: 0.7; }
+.tile-index {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    font-size: 0.6rem;
+    opacity: 0.4;
+}
+
+.stat-card.active-turn {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid var(--accent);
+    box-shadow: 0 0 10px var(--accent);
+}
+
+/* Characters on board */
+.character {
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    mix-blend-mode: multiply;
+}
+
+.character img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.thief-char { transform: scale(1.1); }
+.police-char { transform: scale(1.1); }
+
+/* Modal Overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.question-card {
+    width: 90%;
+    max-width: 600px;
+    padding: 2rem;
+    border-radius: 24px;
+    text-align: center;
+}
+
+.timer-line {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    margin-bottom: 2rem;
+}
+
+#qTimerBar {
+    height: 100%;
+    width: 100%;
+    background: var(--accent);
+    transition: width 0.1s linear;
+}
+
+.options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.option-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1rem;
+    border-radius: 12px;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.option-btn:hover { background: rgba(255, 255, 255, 0.1); transform: translateY(-2px); }
+.option-btn.correct { background: var(--success); border-color: var(--success); color: #000; font-weight: bold; }
+.option-btn.wrong { background: var(--error); border-color: var(--error); }
+
+@media (max-width: 1000px) {
+    :root { --tile-size: 70px; }
+    .game-sidebar { width: 200px; padding: 1rem; }
+}
+
+@media (max-width: 768px) {
+    .game-layout { flex-direction: column-reverse; }
+    .game-sidebar { width: 100%; height: auto; border-right: none; border-top: 1px solid rgba(255, 255, 255, 0.1); }
+    :root { --tile-size: 50px; }
+}
+
+/* Review Table Styles */
+.review-section div::-webkit-scrollbar {
+    width: 6px;
+}
+.review-section div::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+}
+.review-section div::-webkit-scrollbar-thumb {
+    background: var(--accent);
+    border-radius: 3px;
+}
+
+.review-section table th {
+    color: var(--accent);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.review-section table td {
+    color: var(--text);
+}
+
+/* Simple CSS Dice */
+.dice-face {
+    width: 80px;
+    height: 80px;
+    background: #fff;
+    border-radius: 15px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    padding: 10px;
+    gap: 5px;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1), 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.dot {
+    width: 15px;
+    height: 15px;
+    background: #333;
+    border-radius: 50%;
+    align-self: center;
+    justify-self: center;
+}
+
+/* Music Button */
+.music-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    cursor: pointer;
+    font-size: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s;
+}
+
+.music-btn:hover {
+    transform: scale(1.1);
+    background: rgba(255, 255, 255, 0.2);
+}

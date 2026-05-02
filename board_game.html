@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="vi" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="google" content="notranslate">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HSK Thief Chase - Board Game</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/board.css">
+    <script src="js/questions.js"></script>
+</head>
+<body class="board-game-body">
+    <div class="game-layout">
+        <!-- Audio Elements -->
+        <audio id="bgMusic" src="nhac_nen/canon.mp3" loop preload="auto"></audio>
+        <audio id="diceSfx" src="nhac_nen/xucxac.mp3" preload="auto"></audio>
+
+        <!-- Music Toggle Button -->
+        <button id="musicToggle" class="music-btn glass" onclick="toggleMusic()">
+            <span id="musicIcon">🔇</span>
+        </button>
+
+        <aside class="game-sidebar glass">
+            <div class="turn-indicator" id="turnIndicator">
+                <div class="turn-badge thief-turn" id="turnBadge">Lượt của TRỘM</div>
+            </div>
+            
+            <div class="dice-section">
+                <div class="dice-container" id="diceContainer">
+                    <div id="diceFace" class="dice-face">
+                        <!-- Dots will be added here via JS -->
+                    </div>
+                </div>
+                <button class="btn-primary" id="rollBtn">ĐỔ XÚC XẮC</button>
+            </div>
+
+            <div class="stats-section">
+                <div class="stat-card glass">
+                    <img src="assets/thief.png" alt="Thief" class="stat-avatar">
+                    <div class="stat-info">
+                        <span>Trộm</span>
+                        <div class="progress-mini"><div id="thiefProgress" style="width: 0%"></div></div>
+                    </div>
+                </div>
+                <div class="stat-card glass">
+                    <img src="assets/police.png" alt="Police" class="stat-avatar">
+                    <div class="stat-info">
+                        <span>Cảnh sát</span>
+                        <div class="progress-mini"><div id="policeProgress" style="width: 0%"></div></div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn-secondary" onclick="window.location.href='index.html'">Thoát</button>
+        </aside>
+
+        <main class="board-container">
+            <div id="boardGrid" class="board-grid">
+                <!-- Tiles will be generated here -->
+                
+                <!-- Characters inside the grid -->
+                <div id="thiefChar" class="character thief-char">
+                    <img src="assets/thief.png" alt="Thief">
+                </div>
+                <div id="policeChar" class="character police-char">
+                    <img src="assets/police.png" alt="Police">
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Question Modal Overlay -->
+    <div id="questionOverlay" class="modal-overlay" style="display: none;">
+        <div class="question-card glass">
+            <div class="timer-line"><div id="qTimerBar"></div></div>
+            <p id="qNum">Câu hỏi cho ô <span id="tileName">...</span></p>
+            <h2 id="qText">Đang tải...</h2>
+            <div class="options-grid" id="qOptions">
+                <!-- Options -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Result Modal -->
+    <div id="resultModal" class="modal">
+        <div class="glass modal-content">
+            <h1 id="resultTitle">KẾT THÚC!</h1>
+            <p id="resultMessage">...</p>
+            <div id="reviewSection" class="review-section" style="margin-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1.5rem;">
+                <h3 style="margin-bottom: 1rem; color: var(--accent);">Bảng Củng Cố Kiến Thức</h3>
+                <div style="max-height: 250px; overflow-y: auto; background: rgba(0,0,0,0.2); border-radius: 12px; padding: 10px;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+                        <thead style="background: rgba(255,255,255,0.05); position: sticky; top: 0;">
+                            <tr>
+                                <th style="padding: 10px; text-align: left;">Từ vựng</th>
+                                <th style="padding: 10px; text-align: left;">Phiên âm</th>
+                                <th style="padding: 10px; text-align: center;">Kết quả</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reviewBody"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-btns" style="margin-top: 2rem;">
+                <button class="btn-primary" onclick="window.location.reload()">Chơi Lại</button>
+                <button class="btn-primary" style="background: var(--secondary);" onclick="window.location.href='index.html'">Trang Chủ</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/board_game.js"></script>
+</body>
+</html>
