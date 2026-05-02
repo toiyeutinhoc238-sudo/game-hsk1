@@ -466,7 +466,7 @@ const hsk1Vocab = [
     "type": "Danh từ",
     "pinyin": "gǒu",
     "meaning": "chó",
-    "topic": "7. Địa điểm & Nơi chốn"
+    "topic": "15. Tự nhiên"
   },
   {
     "word": "贵",
@@ -667,9 +667,16 @@ const hsk1Vocab = [
   {
     "word": "斤",
     "type": "Lượng từ",
-    "pinyin": "jiàn",
+    "pinyin": "jīn",
     "meaning": "cân",
     "topic": "13. Số lượng & Đo lường"
+  },
+  {
+    "word": "今年",
+    "type": "Danh từ",
+    "pinyin": "jīnnián",
+    "meaning": "Năm nay",
+    "topic": "10. Thời gian"
   },
   {
     "word": "今天",
@@ -819,7 +826,7 @@ const hsk1Vocab = [
     "topic": "14. Công cụ ngữ pháp & Cấu trúc"
   },
   {
-    "word": "買",
+    "word": "买",
     "type": "Động từ",
     "pinyin": "mǎi",
     "meaning": "mua",
@@ -882,10 +889,24 @@ const hsk1Vocab = [
     "topic": "1. Con người & Các mối quan hệ"
   },
   {
+    "word": "们",
+    "type": "Hậu tố",
+    "pinyin": "men",
+    "meaning": "Họ",
+    "topic": "1. Con người & Các mối quan hệ"
+  },
+  {
     "word": "米饭",
     "type": "Danh từ",
     "pinyin": "mǐfàn",
     "meaning": "cơm",
+    "topic": "16. Đồ ăn & Thức uống"
+  },
+  {
+    "word": "面包",
+    "type": "Danh từ",
+    "pinyin": "miànbāo",
+    "meaning": "bánh mỳ",
     "topic": "16. Đồ ăn & Thức uống"
   },
   {
@@ -924,6 +945,13 @@ const hsk1Vocab = [
     "topic": "7. Địa điểm & Nơi chốn"
   },
   {
+    "word": "哪个",
+    "type": "Đại từ",
+    "pinyin": "nǎge",
+    "meaning": "cái nào",
+    "topic": "14. Công cụ ngữ pháp & Cấu trúc"
+  },
+  {
     "word": "哪里",
     "type": "Đại từ",
     "pinyin": "nǎlǐ",
@@ -936,6 +964,13 @@ const hsk1Vocab = [
     "pinyin": "nǎr",
     "meaning": "Ở đâu",
     "topic": "7. Địa điểm & Nơi chốn"
+  },
+  {
+    "word": "哪些",
+    "type": "Đại từ",
+    "pinyin": "nǎxiē",
+    "meaning": "những cái nào",
+    "topic": "14. Công cụ ngữ pháp & Cấu trúc"
   },
   {
     "word": "那",
@@ -1358,6 +1393,27 @@ const hsk1Vocab = [
     "topic": "16. Đồ ăn & Thức uống"
   },
   {
+    "word": "睡",
+    "type": "Động từ",
+    "pinyin": "shuì",
+    "meaning": "ngủ",
+    "topic": "5. Đời sống sinh hoạt"
+  },
+  {
+    "word": "睡觉",
+    "type": "Động từ",
+    "pinyin": "shuìjiào",
+    "meaning": "ngủ",
+    "topic": "5. Đời sống sinh hoạt"
+  },
+  {
+    "word": "说",
+    "type": "Động từ",
+    "pinyin": "shuō",
+    "meaning": "nói",
+    "topic": "4. Tư duy & Nhận thức"
+  },
+  {
     "word": "说话",
     "type": "Động từ",
     "pinyin": "shuōhuà",
@@ -1559,6 +1615,13 @@ const hsk1Vocab = [
     "pinyin": "xià",
     "meaning": "danh từ - vị trí thấp (trên bảng xếp hạng) động từ - rơi",
     "topic": "9. Không gian & Vị trí"
+  },
+  {
+    "word": "下班",
+    "type": "Động từ",
+    "pinyin": "xiàbān",
+    "meaning": "tan ca làm việc",
+    "topic": "11. Công việc & Nghề nghiệp"
   },
   {
     "word": "下课",
@@ -1883,7 +1946,7 @@ const hsk1Vocab = [
     "topic": "14. Công cụ ngữ pháp & Cấu trúc"
   },
   {
-    "word": "在大",
+    "word": "在",
     "type": "Động từ, Phó từ",
     "pinyin": "zài",
     "meaning": "hiện hữu, đang diễn ra",
@@ -2131,7 +2194,9 @@ const hsk1Vocab = [
     "word": "做饭",
     "type": "",
     "pinyin": "zuò fàn",
-    "meaning": "",
+    "meaning": "nấu cơm; nấu ăn",
     "topic": "5. Đời sống sinh hoạt"
   }
 ];
+
+if (typeof module !== 'undefined') module.exports = hsk1Vocab;

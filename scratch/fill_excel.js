@@ -2,9 +2,7 @@ const fs = require('fs');
 const XLSX = require('xlsx');
 
 // 1. Read vocabulary data
-const vocabFileContent = fs.readFileSync('c:/Users/BRAVO 15/Downloads/game tieng trung hsk 1/js/vocabulary_data.js', 'utf8');
-const jsonStr = vocabFileContent.replace('const hsk1Vocab = ', '').replace(/;$/, '').trim();
-const vocabData = JSON.parse(jsonStr);
+const vocabData = require('c:/Users/BRAVO 15/Downloads/game tieng trung hsk 1/js/vocabulary_data.js');
 
 // 2. Group words by topic
 const topicsMap = {};
