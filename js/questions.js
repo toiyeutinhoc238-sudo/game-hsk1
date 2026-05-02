@@ -1,182 +1,72 @@
-const hsk1Questions = {
-    1: [
-        { q: 'Nghĩa của từ "你好" (nǐ hǎo) là gì?', a: ['Tạm biệt', 'Xin chào', 'Cảm ơn', 'Xin lỗi'], correct: 1, vocab: '你好 (nǐ hǎo) - Xin chào' },
-        { q: 'Từ "Xin lỗi" trong tiếng Trung viết là gì?', a: ['没关系', '谢谢', '对不起', '再见'], correct: 2, vocab: '对不起 (duìbuqǐ) - Xin lỗi' },
-        { q: '"没关系" (méi guānxi) có nghĩa là gì?', a: ['Tạm biệt', 'Cảm ơn', 'Không sao đâu', 'Xin chào'], correct: 2, vocab: '没关系 (méi guānxi) - Không sao đâu' },
-        { q: 'Đại từ chỉ "bạn, anh, chị" (số ít) tiếng Trung là gì?', a: ['我', '他', '你', '您'], correct: 2, vocab: '你 (nǐ) - Bạn, anh, chị' },
-        { q: 'Đại từ chỉ "ông, bà, ngài" (lịch sự) tiếng Trung là gì?', a: ['您', '你', '我', '他'], correct: 0, vocab: '您 (nín) - Ông, bà, ngài (lịch sự)' },
-        { q: 'Nghĩa của từ "好" (hǎo) là gì?', a: ['Xấu', 'Lớn', 'Nhỏ', 'Tốt, khỏe'], correct: 3, vocab: '好 (hǎo) - Tốt, khỏe' },
-        { q: '"Các bạn, các anh chị" (số nhiều) trong tiếng Trung là gì?', a: ['我们', '你们', '他们', '您们'], correct: 1, vocab: '你们 (nǐmen) - Các bạn, các anh chị' },
-        { q: 'Khi ai đó nói "对不起", bạn nên đáp lại bằng từ nào?', a: ['谢谢', '没关系', '不客气', '再见'], correct: 1, vocab: '没关系 (méi guānxi) - Không sao đâu' },
-        { q: 'Chữ "们" (men) thường được dùng để làm gì?', a: ['Hỏi', 'Chỉ số nhiều', 'Phủ định', 'Chỉ sở hữu'], correct: 1, vocab: '们 (men) - Chỉ số nhiều' },
-        { q: 'Từ "duìbuqǐ" có chữ Hán tương ứng là gì?', a: ['没关系', '不客气', '对不起', '谢谢'], correct: 2, vocab: '对不起 (duìbuqǐ) - Xin lỗi' }
-    ],
-    2: [
-        { q: 'Nghĩa của từ "谢谢" (xièxie) là gì?', a: ['Xin lỗi', 'Cảm ơn', 'Tạm biệt', 'Xin chào'], correct: 1, vocab: '谢谢 (xièxie) - Cảm ơn' },
-        { q: 'Từ "Tạm biệt" trong tiếng Trung viết là gì?', a: ['谢谢', '再见', '不客气', '没关系'], correct: 1, vocab: '再见 (zàijiàn) - Tạm biệt' },
-        { q: '"不客气" (bú kèqi) có nghĩa là gì?', a: ['Xin lỗi', 'Không sao', 'Đừng khách sáo', 'Tạm biệt'], correct: 2, vocab: '不客气 (bú kèqi) - Đừng khách sáo' },
-        { q: 'Từ "Không" trong tiếng Trung viết chữ Hán như thế nào?', a: ['没', '好', '不', '是'], correct: 2, vocab: '不 (bù) - Không' },
-        { q: 'Pinyin của từ "不" là gì?', a: ['bó', 'bù', 'bā', 'bǐ'], correct: 1, vocab: '不 (bù) - Không' },
-        { q: '"Cảm ơn bạn" tiếng Trung nói như thế nào?', a: ['你好', '对不起', '谢谢你', '再见你'], correct: 2, vocab: '谢谢你 (xièxie nǐ) - Cảm ơn bạn' },
-        { q: 'Nghĩa của từ "再见" (zàijiàn) là gì?', a: ['Xin lỗi', 'Hẹn gặp lại', 'Tạm biệt', 'Cảm ơn'], correct: 2, vocab: '再见 (zàijiàn) - Tạm biệt' },
-        { q: 'Chữ "客" ghép với chữ "气" tạo thành từ mang nghĩa gì?', a: ['Khách sáo', 'Tức giận', 'Vui vẻ', 'Lịch sự'], correct: 0, vocab: '客气 (kèqi) - Khách sáo' },
-        { q: 'Khi người khác nói "谢谢", bạn thường trả lời thế nào?', a: ['不客气', '对不起', '再见', '没关系'], correct: 0, vocab: '不客气 (bú kèqi) - Đừng khách sáo' },
-        { q: 'Từ "zàijiàn" có chữ Hán tương ứng là gì?', a: ['再见', '谢谢', '不见', '再来'], correct: 0, vocab: '再见 (zàijiàn) - Tạm biệt' }
-    ],
-    3: [
-        { q: 'Từ "Tên" trong tiếng Trung là gì?', a: ['什么', '名字', '叫', '字'], correct: 1, vocab: '名字 (míngzi) - Tên' },
-        { q: 'Nghĩa của từ "什么" (shénme) là gì?', a: ['Gì, cái gì', 'Ai', 'Ở đâu', 'Khi nào'], correct: 0, vocab: '什么 (shénme) - Gì, cái gì' },
-        { q: '"Học sinh" viết bằng chữ Hán là gì?', a: ['老师', '学校', '学生', '同学'], correct: 2, vocab: '学生 (xuésheng) - Học sinh' },
-        { q: '"老师" (lǎoshī) có nghĩa là gì?', a: ['Bác sĩ', 'Thầy/cô giáo', 'Học sinh', 'Giám đốc'], correct: 1, vocab: '老师 (lǎoshī) - Thầy/cô giáo' },
-        { q: 'Đại từ "Tôi, mình" trong tiếng Trung là gì?', a: ['你', '他', '我', '她'], correct: 2, vocab: '我 (wǒ) - Tôi' },
-        { q: 'Động từ "Là" viết chữ Hán thế nào?', a: ['在', '有', '叫', '是'], correct: 3, vocab: '是 (shì) - Là' },
-        { q: 'Trợ từ để hỏi "Không?" đặt ở cuối câu là gì?', a: ['呢', '吗', '吧', '啊'], correct: 1, vocab: '吗 (ma) - Không?' },
-        { q: 'Nghĩa của từ "人" (rén) là gì?', a: ['Nhà', 'Xe', 'Người', 'Đồ vật'], correct: 2, vocab: '人 (rén) - Người' },
-        { q: 'Động từ "Gọi, tên là" trong tiếng Trung là gì?', a: ['说', '看', '叫', '问'], correct: 2, vocab: '叫 (jiào) - Gọi, tên là' },
-        { q: 'Pinyin của từ "名字" là gì?', a: ['míngzi', 'míngzì', 'mǐngzi', 'mīngzì'], correct: 0, vocab: '名字 (míngzi) - Tên' }
-    ],
-    4: [
-        { q: '"Tiếng Trung Quốc" trong tiếng Trung là gì?', a: ['英语', '汉语', '法语', '越语'], correct: 1, vocab: '汉语 (Hànyǔ) - Tiếng Trung Quốc' },
-        { q: 'Nghĩa của từ "朋友" (péngyou) là gì?', a: ['Thầy giáo', 'Học sinh', 'Bạn bè', 'Gia đình'], correct: 2, vocab: '朋友 (péngyou) - Bạn bè' },
-        { q: 'Đại từ "Ai" trong tiếng Trung viết là gì?', a: ['哪', '谁', '怎么', '什么'], correct: 1, vocab: '谁 (shéi) - Ai' },
-        { q: '"同学" (tóngxué) có nghĩa là gì?', a: ['Bạn cùng lớp', 'Đồng nghiệp', 'Bạn thân', 'Hàng xóm'], correct: 0, vocab: '同学 (tóngxué) - Bạn cùng lớp' },
-        { q: 'Trợ từ sở hữu "Của" là từ nào?', a: ['呢', '吗', '的', '了'], correct: 2, vocab: '的 (de) - Của' },
-        { q: 'Từ "Đất nước, quốc gia" viết chữ Hán là gì?', a: ['国', '家', '人', '天'], correct: 0, vocab: '国 (guó) - Đất nước, quốc gia' },
-        { q: 'Đại từ "Cô ấy, bà ấy" trong tiếng Trung là gì?', a: ['他', '她', '它', '你'], correct: 1, vocab: '她 (tā) - Cô ấy' },
-        { q: 'Nghĩa của từ "哪" (nǎ) là gì?', a: ['Kia', 'Đây', 'Nào', 'Đâu'], correct: 2, vocab: '哪 (nǎ) - Nào' },
-        { q: 'Đại từ "Anh ấy, ông ấy" tiếng Trung là gì?', a: ['他', '她', '我', '您'], correct: 0, vocab: '他 (tā) - Anh ấy' },
-        { q: 'Trợ từ "呢" (ne) mang ý nghĩa gì?', a: ['Để hỏi "có không"', 'Nhỉ, thế (hỏi)', 'Đã, rồi', 'Đang'], correct: 1, vocab: '呢 (ne) - Nhỉ, thế (hỏi)' }
-    ],
-    5: [
-        { q: 'Nghĩa của từ "今年" (jīnnián) là gì?', a: ['Năm ngoái', 'Sang năm', 'Năm nay', 'Hằng năm'], correct: 2, vocab: '今年 (jīnnián) - Năm nay' },
-        { q: 'Từ "Con gái" trong tiếng Trung viết là gì?', a: ['儿子', '女儿', '孩子', '女人'], correct: 1, vocab: '女儿 (nǚ\'ér) - Con gái' },
-        { q: 'Nghĩa của từ "岁" (suì) là gì?', a: ['Tháng', 'Ngày', 'Năm', 'Tuổi'], correct: 3, vocab: '岁 (suì) - Tuổi' },
-        { q: 'Từ "Nhà" hoặc "Gia đình" trong tiếng Trung là gì?', a: ['家', '国', '小', '店'], correct: 0, vocab: '家 (jiā) - Nhà, gia đình' },
-        { q: 'Động từ "Có" viết chữ Hán thế nào?', a: ['在', '有', '是', '没'], correct: 1, vocab: '有 (yǒu) - Có' },
-        { q: 'Đại từ "Bao nhiêu" (hỏi mức độ) là gì?', a: ['怎', '十', '多', '几'], correct: 2, vocab: '多 (duō) - Bao nhiêu' },
-        { q: 'Tính từ "To, lớn" viết chữ Hán là gì?', a: ['小', '多', '大', '少'], correct: 2, vocab: '大 (dà) - To, lớn' },
-        { q: 'Đại từ "Mấy, vài" viết chữ Hán là gì?', a: ['多', '十', '九', '几'], correct: 3, vocab: '几 (jǐ) - Mấy, vài' },
-        { q: 'Lượng từ dùng để chỉ số người trong gia đình là từ nào?', a: ['个', '本', '口', '只'], correct: 2, vocab: '口 (kǒu) - Lượng từ cho người thân' },
-        { q: 'Trợ từ chỉ sự thay đổi (rồi) là từ nào?', a: ['了', '的', '呢', '吗'], correct: 0, vocab: '了 (le) - Rồi' }
-    ],
-    6: [
-        { q: 'Từ "Ngon" (dùng cho đồ ăn) tiếng Trung là gì?', a: ['好喝', '好吃', '好看', '好听'], correct: 1, vocab: '好吃 (hǎochī) - Ngon' },
-        { q: 'Nghĩa của từ "怎么" (zěnme) là gì?', a: ['Bao nhiêu', 'Cái gì', 'Như thế nào', 'Ở đâu'], correct: 2, vocab: '怎么 (zěnme) - Như thế nào' },
-        { q: 'Động từ "Nói" viết chữ Hán là gì?', a: ['读', '听', '写', '说'], correct: 3, vocab: '说 (shuō) - Nói' },
-        { q: 'Từ "Chữ Hán" trong tiếng Trung là gì?', a: ['汉语', '中国', '汉字', '名字'], correct: 2, vocab: '汉字 (Hànzì) - Chữ Hán' },
-        { q: 'Nghĩa của từ "做" (zuò) là gì?', a: ['Đi', 'Ngồi', 'Làm, nấu', 'Xem'], correct: 2, vocab: '做 (zuò) - Làm, nấu' },
-        { q: 'Từ "Mẹ" viết bằng chữ Hán thế nào?', a: ['爸爸', '奶奶', '姐姐', '妈妈'], correct: 3, vocab: '妈妈 (māma) - Mẹ' },
-        { q: 'Phó từ "Rất" trong tiếng Trung là gì?', a: ['太', '很', '不', '都'], correct: 1, vocab: '很 (hěn) - Rất' },
-        { q: 'Nghĩa của động từ "读" (dú) là gì?', a: ['Viết', 'Đọc', 'Nghe', 'Nói'], correct: 1, vocab: '读 (dú) - Đọc' },
-        { q: 'Động từ khuyết thiếu "Biết" (thông qua học tập) là từ nào?', a: ['能', '会', '想', '喜'], correct: 1, vocab: '会 (huì) - Biết (học tập)' },
-        { q: 'Nghĩa của từ "菜" (cài) là gì?', a: ['Cơm', 'Nước', 'Trà', 'Món ăn, thức ăn'], correct: 3, vocab: '菜 (cài) - Món ăn, thức ăn' }
-    ],
-    7: [
-        { q: 'Từ "Hôm nay" tiếng Trung là gì?', a: ['明天', '昨天', '今天', '星期'], correct: 2, vocab: '今天 (jīntiān) - Hôm nay' },
-        { q: 'Nghĩa của từ "学校" (xuéxiào) là gì?', a: ['Bệnh viện', 'Trường học', 'Cửa hàng', 'Nhà hàng'], correct: 1, vocab: '学校 (xuéxiào) - Trường học' },
-        { q: 'Từ "Ngày mai" viết chữ Hán là gì?', a: ['昨天', '明天', '今天', '上午'], correct: 1, vocab: '明天 (míngtiān) - Ngày mai' },
-        { q: 'Từ "Hôm qua" trong tiếng Trung là gì?', a: ['昨天', '明天', '今天', '下午'], correct: 0, vocab: '昨天 (zuótiān) - Hôm qua' },
-        { q: 'Nghĩa của từ "星期" (xīngqī) là gì?', a: ['Tháng', 'Năm', 'Tuần, thứ', 'Ngày'], correct: 2, vocab: '星期 (xīngqī) - Tuần, thứ' },
-        { q: 'Từ "Tháng" tiếng Trung là gì?', a: ['年', '日', '月', '号'], correct: 2, vocab: '月 (yuè) - Tháng' },
-        { q: 'Từ "Ngày (mùng)" trong tiếng Trung viết là gì?', a: ['月', '岁', '点', '号'], correct: 3, vocab: '号 (hào) - Ngày (mùng)' },
-        { q: 'Động từ "Đi" tiếng Trung là gì?', a: ['来', '去', '回', '看'], correct: 1, vocab: '去 (qù) - Đi' },
-        { q: 'Nghĩa của từ "看" (kàn) là gì?', a: ['Nghe', 'Nói', 'Nhìn, xem, đọc', 'Viết'], correct: 2, vocab: '看 (kàn) - Nhìn, xem, đọc' },
-        { q: 'Động từ "Hỏi" viết chữ Hán là gì?', a: ['说', '请', '问', '叫'], correct: 2, vocab: '问 (wèn) - Hỏi' }
-    ],
-    8: [
-        { q: 'Từ "Buổi chiều" tiếng Trung là gì?', a: ['上午', '下午', '中午', '明天'], correct: 1, vocab: '下午 (xiàwǔ) - Buổi chiều' },
-        { q: 'Nghĩa của từ "买" (mǎi) là gì?', a: ['Mua', 'Bán', 'Xin', 'Cho'], correct: 0, vocab: '买 (mǎi) - Mua' },
-        { q: 'Từ "Cửa hàng" viết chữ Hán thế nào?', a: ['饭店', '医院', '商店', '学校'], correct: 2, vocab: '商店 (shāngdiàn) - Cửa hàng' },
-        { q: 'Từ "Bao nhiêu" tiếng Trung là gì?', a: ['什么', '怎么', '多少', '几个'], correct: 2, vocab: '多少 (duōshǎo) - Bao nhiêu' },
-        { q: 'Nghĩa của từ "钱" (qián) là gì?', a: ['Sách', 'Đồ vật', 'Cơm', 'Tiền'], correct: 3, vocab: '钱 (qián) - Tiền' },
-        { q: 'Từ "Cái ly, tách, cốc" viết chữ Hán là gì?', a: ['椅子', '桌子', '杯子', '电脑'], correct: 2, vocab: '杯子 (bēizi) - Cốc, ly' },
-        { q: 'Động từ "Uống" tiếng Trung là gì?', a: ['吃', '喝', '看', '买'], correct: 1, vocab: '喝 (hē) - Uống' },
-        { q: 'Nghĩa của từ "米饭" (mǐfàn) là gì?', a: ['Trà', 'Nước', 'Trái cây', 'Cơm'], correct: 3, vocab: '米饭 (mǐfàn) - Cơm niêu' },
-        { q: 'Đại từ "Kia, đó" tiếng Trung là từ nào?', a: ['这', '哪', '那', '谁'], correct: 2, vocab: '那 (nà) - Kia, đó' },
-        { q: 'Động từ "Ăn" viết chữ Hán thế nào?', a: ['吃', '喝', '买', '去'], correct: 0, vocab: '吃 (chī) - Ăn' }
-    ],
-    9: [
-        { q: 'Từ "Bệnh viện" tiếng Trung là gì?', a: ['医院', '医生', '饭店', '商店'], correct: 0, vocab: '医院 (yīyuàn) - Bệnh viện' },
-        { q: 'Nghĩa của từ "医生" (yīshēng) là gì?', a: ['Học sinh', 'Giáo viên', 'Bác sĩ', 'Giám đốc'], correct: 2, vocab: '医生 (yīshēng) - Bác sĩ' },
-        { q: 'Từ "Con mèo" viết chữ Hán là gì?', a: ['狗', '猫', '猪', '马'], correct: 1, vocab: '猫 (māo) - Mèo' },
-        { q: 'Từ "Con chó" tiếng Trung là gì?', a: ['猫', '鱼', '狗', '牛'], correct: 2, vocab: '狗 (gǒu) - Chó' },
-        { q: 'Nghĩa của từ "工作" (gōngzuò) là gì?', a: ['Học tập', 'Nghỉ ngơi', 'Vui chơi', 'Làm việc'], correct: 3, vocab: '工作 (gōngzuò) - Làm việc' },
-        { q: 'Từ "Ghế tựa" viết chữ Hán thế nào?', a: ['桌子', '椅子', '杯子', '电脑'], correct: 1, vocab: '椅子 (yǐzi) - Ghế' },
-        { q: 'Đại từ "Ở đâu" tiếng Trung là gì?', a: ['那儿', '这儿', '哪儿', '怎么'], correct: 2, vocab: '哪儿 (nǎr) - Ở đâu' },
-        { q: 'Nghĩa của từ "儿子" (érzi) là gì?', a: ['Con gái', 'Con trai', 'Trẻ em', 'Học sinh'], correct: 1, vocab: '儿子 (érzi) - Con trai' },
-        { q: 'Từ "Bên dưới, phía dưới" tiếng Trung là gì?', a: ['上面', '前面', '后面', '下面'], correct: 3, vocab: '下面 (xiàmiàn) - Phía dưới' },
-        { q: 'Nghĩa của từ "小" (xiǎo) là gì?', a: ['Lớn', 'Nhiều', 'Nhỏ, bé', 'Ít'], correct: 2, vocab: '小 (xiǎo) - Nhỏ' }
-    ],
-    10: [
-        { q: 'Từ "Phía trước" tiếng Trung là gì?', a: ['后面', '上面', '前面', '下面'], correct: 2, vocab: '前面 (qiánmiàn) - Phía trước' },
-        { q: 'Nghĩa của từ "电脑" (diànnǎo) là gì?', a: ['Điện thoại', 'Máy vi tính', 'Tivi', 'Đồng hồ'], correct: 1, vocab: '电脑 (diànnǎo) - Máy tính' },
-        { q: 'Từ "Cái bàn" viết chữ Hán thế nào?', a: ['椅子', '桌子', '杯子', '房子'], correct: 1, vocab: '桌子 (zhuōzi) - Bàn' },
-        { q: 'Từ "Bên trong" tiếng Trung là gì?', a: ['里', '外', '上', '下'], correct: 0, vocab: '里 (lǐ) - Bên trong' },
-        { q: 'Nghĩa của từ "后面" (hòumiàn) là gì?', a: ['Phía trước', 'Bên trái', 'Bên phải', 'Phía sau'], correct: 3, vocab: '后面 (hòumiàn) - Phía sau' },
-        { q: 'Động từ "Có thể" tiếng Trung là gì?', a: ['会', '要', '能', '想'], correct: 2, vocab: '能 (néng) - Có thể' },
-        { q: 'Từ "Ngồi" viết chữ Hán thế nào?', a: ['站', '走', '坐', '去'], correct: 2, vocab: '坐 (zuò) - Ngồi' },
-        { q: 'Nghĩa của từ "没有" (méiyǒu) là gì?', a: ['Có', 'Không có', 'Chưa', 'Đã'], correct: 1, vocab: '没有 (méiyǒu) - Không có' },
-        { q: 'Liên từ "Và" tiếng Trung là gì?', a: ['也', '和', '都', '不'], correct: 1, vocab: '和 (hé) - Và' },
-        { q: 'Từ "Ở đây" viết chữ Hán thế nào?', a: ['哪儿', '那儿', '这儿', '怎么'], correct: 2, vocab: '这儿 (zhèr) - Ở đây' }
-    ],
-    11: [
-        { q: 'Từ "Bây giờ" tiếng Trung là gì?', a: ['现在', '今天', '明天', '昨天'], correct: 0, vocab: '现在 (xiànzài) - Bây giờ' },
-        { q: 'Nghĩa của từ "中午" (zhōngwǔ) là gì?', a: ['Buổi sáng', 'Buổi trưa', 'Buổi chiều', 'Buổi tối'], correct: 1, vocab: '中午 (zhōngwǔ) - Buổi trưa' },
-        { q: 'Từ "Ăn cơm" viết chữ Hán thế nào?', a: ['喝茶', '做饭', '吃饭', '买菜'], correct: 2, vocab: '吃饭 (chīfàn) - Ăn cơm' },
-        { q: 'Từ "Chúng ta" tiếng Trung là gì?', a: ['你们', '他们', '她们', '我们'], correct: 3, vocab: '我们 (wǒmen) - Chúng ta' },
-        { q: 'Nghĩa của từ "电影" (diànyǐng) là gì?', a: ['Tivi', 'Điện thoại', 'Phim', 'Máy tính'], correct: 2, vocab: '电影 (diànyǐng) - Phim' },
-        { q: 'Động từ "Về, trở về" tiếng Trung là gì?', a: ['去', '来', '回', '看'], correct: 2, vocab: '回 (huí) - Về' },
-        { q: 'Từ "Phút" viết chữ Hán thế nào?', a: ['点', '分', '秒', '刻'], correct: 1, vocab: '分 (fēn) - Phút' },
-        { q: 'Nghĩa của từ "时候" (shíhou) là gì?', a: ['Thời gian', 'Lúc, khi', 'Hôm nay', 'Năm nay'], correct: 1, vocab: '时候 (shíhou) - Lúc, khi' },
-        { q: 'Động từ "Ở, sống" tiếng Trung là gì?', a: ['在', '有', '去', '住'], correct: 3, vocab: '住 (zhù) - Sống, ở' },
-        { q: 'Nghĩa của từ "前" (qián) là gì?', a: ['Sau', 'Trước', 'Trên', 'Dưới'], correct: 1, vocab: '前 (qián) - Trước' }
-    ],
-    12: [
-        { q: 'Từ "Thời tiết" tiếng Trung là gì?', a: ['阴天', '晴天', '天气', '空气'], correct: 2, vocab: '天气 (tiānqì) - Thời tiết' },
-        { q: 'Nghĩa của từ "水果" (shuǐguǒ) là gì?', a: ['Rau củ', 'Trái cây', 'Kẹo', 'Bánh'], correct: 1, vocab: '水果 (shuǐguǒ) - Hoa quả' },
-        { q: 'Tính từ "Nóng" viết chữ Hán thế nào?', a: ['冷', '热', '暖', '凉'], correct: 1, vocab: '热 (rè) - Nóng' },
-        { q: 'Tính từ "Lạnh" tiếng Trung là gì?', a: ['热', '冰', '冷', '雪'], correct: 2, vocab: '冷 (lěng) - Lạnh' },
-        { q: 'Nghĩa của từ "身体" (shēntǐ) là gì?', a: ['Bệnh viện', 'Thể thao', 'Sức khỏe, cơ thể', 'Công việc'], correct: 2, vocab: '身体 (shēntǐ) - Sức khỏe' },
-        { q: 'Hiện tượng "Đổ mưa" tiếng Trung gọi là gì?', a: ['下雪', '下雨', '刮风', '起雾'], correct: 1, vocab: '下雨 (xiàyǔ) - Mưa' },
-        { q: 'Nghĩa của từ "怎么样" (zěnmeyàng) là gì?', a: ['Cái gì', 'Khi nào', 'Như thế nào', 'Ở đâu'], correct: 2, vocab: '怎么样 (zěnmeyàng) - Như thế nào' },
-        { q: 'Động từ "Yêu, thích" tiếng Trung là gì?', a: ['恨', '怕', '爱', '想'], correct: 2, vocab: '爱 (ài) - Yêu' },
-        { q: 'Từ "Nước" viết chữ Hán thế nào?', a: ['冰', '雨', '茶', '水'], correct: 3, vocab: '水 (shuǐ) - Nước' },
-        { q: 'Động từ "Đến, tới" tiếng Trung là gì?', a: ['去', '来', '回', '出'], correct: 1, vocab: '来 (lái) - Đến' }
-    ],
-    13: [
-        { q: 'Từ "Buổi sáng" tiếng Trung là gì?', a: ['上午', '下午', '中午', '晚上'], correct: 0, vocab: '上午 (shàngwǔ) - Buổi sáng' },
-        { q: 'Nghĩa của từ "喜欢" (xǐhuan) là gì?', a: ['Ghét', 'Thích', 'Sợ', 'Buồn'], correct: 1, vocab: '喜欢 (xǐhuan) - Thích' },
-        { q: 'Động từ "Ngủ" viết chữ Hán thế nào?', a: ['醒来', '睡觉', '休息', '躺下'], correct: 1, vocab: '睡觉 (shuìjiào) - Ngủ' },
-        { q: 'Từ "Tivi" tiếng Trung là gì?', a: ['电脑', '电影', '电视', '电话'], correct: 2, vocab: '电视 (diànshì) - Tivi' },
-        { q: 'Nghĩa của cụm từ "打电话" (dǎ diànhuà) là gì?', a: ['Xem phim', 'Chơi game', 'Gọi điện thoại', 'Mua đồ'], correct: 2, vocab: '打电话 (dǎ diànhuà) - Gọi điện' },
-        { q: 'Động từ "Học tập" tiếng Trung là gì?', a: ['工作', '学习', '运动', '休息'], correct: 1, vocab: '学习 (xuéxí) - Học tập' },
-        { q: 'Nghĩa của phó từ "也" (yě) là gì?', a: ['Đều', 'Rất', 'Không', 'Cũng'], correct: 3, vocab: '也 (yě) - Cũng' },
-        { q: 'Từ "Alo, này" (khi nghe điện thoại) viết chữ Hán thế nào?', a: ['吧', '呢', '喂', '吗'], correct: 2, vocab: '喂 (wèi) - Alo' },
-        { q: 'Giới từ "Cho" tiếng Trung là gì?', a: ['在', '给', '和', '的'], correct: 1, vocab: '给 (gěi) - Cho' },
-        { q: 'Trợ từ cuối câu "Nhé, đi" viết chữ Hán thế nào?', a: ['吗', '呢', '啊', '吧'], correct: 3, vocab: '吧 (ba) - Nhé' }
-    ],
-    14: [
-        { q: 'Từ "Quần áo" tiếng Trung là gì?', a: ['孩子', '衣服', '裤子', '帽子'], correct: 1, vocab: '衣服 (yīfu) - Quần áo' },
-        { q: 'Nghĩa của từ "漂亮" (piàoliang) là gì?', a: ['Xấu xí', 'Dễ thương', 'Đẹp', 'Thông minh'], correct: 2, vocab: '漂亮 (piàoliang) - Đẹp' },
-        { q: 'Từ "Quả táo" viết chữ Hán thế nào?', a: ['香蕉', '苹果', '西瓜', '葡萄'], correct: 1, vocab: '苹果 (píngguǒ) - Táo' },
-        { q: 'Từ "Đồ vật, đồ đạc" tiếng Trung là gì?', a: ['东西', '行李', '水果', '商店'], correct: 0, vocab: '东西 (dōngxi) - Đồ vật' },
-        { q: 'Nghĩa của từ "看见" (kànjiàn) là gì?', a: ['Nghe thấy', 'Nghĩ đến', 'Nhìn thấy', 'Tìm thấy'], correct: 2, vocab: '看见 (kànjiàn) - Nhìn thấy' },
-        { q: 'Từ "Ông, ngài" viết chữ Hán thế nào?', a: ['小姐', '老师', '医生', '先生'], correct: 3, vocab: '先生 (xiänsheng) - Ông' },
-        { q: 'Động từ "Quay về" tiếng Trung là gì?', a: ['回去', '回来', '进去', '出来'], correct: 1, vocab: '回来 (huílái) - Quay về' },
-        { q: 'Đại từ chỉ "Những thứ này" tiếng Trung là gì?', a: ['那些', '哪个', '这些', '这个'], correct: 2, vocab: '这些 (zhèxiē) - Những thứ này' },
-        { q: 'Động từ "Lái (xe)" tiếng Trung là gì?', a: ['坐', '开', '骑', '走'], correct: 1, vocab: '开 (kāi) - Lái' },
-        { q: 'Nghĩa của từ "少" (shǎo) là gì?', a: ['Nhiều', 'Ít', 'Lớn', 'Nhỏ'], correct: 1, vocab: '少 (shǎo) - Ít' }
-    ],
-    15: [
-        { q: 'Từ "Máy bay" tiếng Trung là gì?', a: ['火车', '汽车', '飞机', '自行车'], correct: 2, vocab: '飞机 (fēijī) - Máy bay' },
-        { q: 'Nghĩa của từ "高兴" (gāoxìng) là gì?', a: ['Tức giận', 'Buồn bã', 'Vui, phấn khởi', 'Lo lắng'], correct: 2, vocab: '高兴 (gāoxìng) - Vui' },
-        { q: 'Từ "Trường đại học" viết chữ Hán thế nào?', a: ['小学', '中学', '大学', '学校'], correct: 2, vocab: '大学 (dàxué) - Đại học' },
-        { q: 'Từ "Xe taxi" tiếng Trung là gì?', a: ['出租车', '公交车', '自行车', '摩托车'], correct: 0, vocab: '出租车 (chūzūchē) - Taxi' },
-        { q: 'Nghĩa của từ "认识" (rènshi) là gì?', a: ['Hiểu', 'Biết (kỹ năng)', 'Quen, biết (người)', 'Nhớ'], correct: 2, vocab: '认识 (rènshi) - Quen biết' },
-        { q: 'Phó từ "Cùng nhau" viết chữ Hán thế nào?', a: ['都', '也', '一起', '很'], correct: 2, vocab: '一起 (yīqǐ) - Cùng nhau' },
-        { q: 'Động từ "Nghe" tiếng Trung là gì?', a: ['说', '听', '读', '写'], correct: 1, vocab: '听 (tīng) - Nghe' },
-        { q: 'Nghĩa của từ "饭店" (fàndiàn) là gì?', a: ['Cửa hàng', 'Nhà hàng, khách sạn', 'Bệnh viện', 'Quán cà phê'], correct: 1, vocab: '饭店 (fàndiàn) - Nhà hàng' },
-        { q: 'Từ "Năm" viết chữ Hán thế nào?', a: ['月', '号', '年', '岁'], correct: 2, vocab: '年 (nián) - Năm' },
-        { q: 'Dịch câu "Rất vui được biết bạn" dùng tính từ nào?', a: ['漂亮', '好吃', '高兴', '大'], correct: 2, vocab: '高兴 (gāoxìng) - Vui' }
-    ]
-};
+/**
+ * Dynamic Question Generator for HSK 1
+ * Uses data from vocabulary_data.js
+ */
+
+function generateQuestionsForTopic(topicName) {
+    const topicVocab = hsk1Vocab.filter(item => item.topic === topicName);
+    if (topicVocab.length === 0) return [];
+
+    const questions = topicVocab.map(item => {
+        const qType = Math.random() > 0.5 ? 'CN_TO_VN' : 'VN_TO_CN';
+        let questionText, options, correctIdx;
+
+        if (qType === 'CN_TO_VN') {
+            // Question: Chinese -> Options: Vietnamese meanings
+            const others = hsk1Vocab.filter(v => v.meaning !== item.meaning);
+            const distractors = [];
+            while (distractors.length < 3) {
+                const random = others[Math.floor(Math.random() * others.length)];
+                if (!distractors.includes(random.meaning)) {
+                    distractors.push(random.meaning);
+                }
+            }
+
+            const rawOptions = [item.meaning, ...distractors];
+            // Shuffle options
+            for (let i = rawOptions.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [rawOptions[i], rawOptions[j]] = [rawOptions[j], rawOptions[i]];
+            }
+            
+            questionText = `Nghĩa của từ "${item.word}" (${item.pinyin}) là gì?`;
+            options = rawOptions;
+            correctIdx = options.indexOf(item.meaning);
+        } else {
+            // Question: Vietnamese -> Options: Chinese words
+            const others = hsk1Vocab.filter(v => v.word !== item.word);
+            const distractors = [];
+            while (distractors.length < 3) {
+                const random = others[Math.floor(Math.random() * others.length)];
+                if (!distractors.includes(random.word)) {
+                    distractors.push(random.word);
+                }
+            }
+
+            const rawOptions = [item.word, ...distractors];
+            // Shuffle options
+            for (let i = rawOptions.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [rawOptions[i], rawOptions[j]] = [rawOptions[j], rawOptions[i]];
+            }
+
+            questionText = `Từ nào sau đây có nghĩa là "${item.meaning}"?`;
+            options = rawOptions;
+            correctIdx = options.indexOf(item.word);
+        }
+
+        return {
+            q: questionText,
+            a: options,
+            correct: correctIdx,
+            vocab: `${item.word} (${item.pinyin}) - ${item.meaning}`,
+            word: item.word,
+            pinyin: item.pinyin,
+            meaning: item.meaning
+        };
+    });
+
+    return questions;
+}
+
+const hsk1Questions = {};

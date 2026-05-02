@@ -5,16 +5,16 @@
     <meta charset="UTF-8">
     <meta name="google" content="notranslate">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HSK 1 Quiz Battle - Đại Chiến Từ Vựng</title>
+    <title>HSK 1 - TRUY ĐUỔI KẺ TRỘM</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
+    <div class="bg-dots" id="bgDots"></div>
     <div class="container">
         <header>
-            <h1>HSK 1 VOCABULARY MASTER</h1>
-            <p style="text-align: center; color: var(--text-muted); margin-top: -1rem; margin-bottom: 3rem;">Chơi ngay
-                để chinh phục từ vựng HSK 1 thật dễ dàng!</p>
+            <h1>HSK 1 - TRUY ĐUỔI KẺ TRỘM</h1>
+            <p class="hero-subtitle">Chinh phục 300+ từ vựng HSK 1 thông qua trò chơi rượt đuổi đầy kịch tính!</p>
         </header>
 
         <section class="lesson-selection">
@@ -27,7 +27,8 @@
     <!-- Instructions Modal -->
     <div id="instructionModal" class="modal" style="display: flex;">
         <div class="glass modal-content">
-            <h2 style="margin-bottom: 1.5rem; color: var(--secondary);">Hướng Dẫn Cách Chơi - Game Kẻ Trộm</h2>
+            <h2 style="margin-bottom: 1.5rem; color: var(--secondary);">Hướng Dẫn Cách Chơi
+            </h2>
             <div style="text-align: left; margin-bottom: 2rem; line-height: 1.6;">
                 <p>1. Chia làm 2 người hoặc 2 đội chơi: một bên là <b>Kẻ Trộm</b>, một bên là <b>Cảnh Sát</b>.</p>
                 <p>2. Kẻ Trộm bắt đầu từ ô số 0, Cảnh Sát bắt đầu từ ô số 34.</p>
@@ -42,21 +43,72 @@
         </div>
     </div>
 
+    <script src="js/vocabulary_data.js"></script>
     <script>
         const grid = document.getElementById('lessonGrid');
-        for (let i = 1; i <= 15; i++) {
+
+        // Get unique topics from vocabulary data
+        const topics = [...new Set(hsk1Vocab.map(item => item.topic))].sort((a, b) => {
+            const numA = parseInt(a.split('.')[0]);
+            const numB = parseInt(b.split('.')[0]);
+            if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
+            return a.localeCompare(b);
+        });
+
+        const iconMap = {
+            "Con người": "👥",
+            "Cơ thể": "🏥",
+            "Cảm xúc": "😊",
+            "Tư duy": "🧠",
+            "Đời sống": "🏠",
+            "Đồ vật": "🛠️",
+            "Địa điểm": "📍",
+            "Giao thông": "🚗",
+            "Không gian": "🗺️",
+            "Thời gian": "⏰",
+            "Công việc": "💼",
+            "Miêu tả": "⭐",
+            "Số lượng": "🔢",
+            "Công cụ ngữ pháp": "📖",
+            "Tự nhiên": "🌿",
+            "Đồ ăn": "🍕"
+        };
+
+        function getIcon(topicName) {
+            for (let key in iconMap) {
+                if (topicName.includes(key)) return iconMap[key];
+            }
+            return "🎯";
+        }
+
+        topics.forEach((topic, index) => {
             const card = document.createElement('div');
             card.className = 'glass lesson-card';
+            const count = hsk1Vocab.filter(i => i.topic === topic).length;
+            const icon = getIcon(topic);
+
             card.innerHTML = `
-                <h3>Bài ${i}</h3>
-                <p>HSK 1 Lesson ${i}</p>
+                <div class="topic-icon">${icon}</div>
+                <h3>${topic}</h3>
+                <div class="word-badge">${count} từ vựng</div>
             `;
-            card.onclick = () => window.location.href = `board_game.html?lesson=${i}`;
+            card.onclick = () => window.location.href = `board_game.html?topic=${encodeURIComponent(topic)}`;
             grid.appendChild(card);
-        }
+        });
 
         function closeInstructions() {
             document.getElementById('instructionModal').style.display = 'none';
+        }
+
+        // Generate background dots
+        const bgDots = document.getElementById('bgDots');
+        for (let i = 0; i < 30; i++) {
+            const dot = document.createElement('div');
+            dot.className = 'bg-particle';
+            dot.style.left = Math.random() * 100 + 'vw';
+            dot.style.animationDelay = Math.random() * 20 + 's';
+            dot.style.opacity = Math.random();
+            bgDots.appendChild(dot);
         }
     </script>
 </body>

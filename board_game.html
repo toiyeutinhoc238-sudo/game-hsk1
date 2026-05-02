@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <meta name="google" content="notranslate">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HSK Thief Chase - Board Game</title>
+    <title>HSK 1 - TRUY ĐUỔI KẺ TRỘM</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/board.css">
+    <script src="js/vocabulary_data.js"></script>
     <script src="js/questions.js"></script>
 </head>
 <body class="board-game-body">
@@ -14,6 +15,8 @@
         <!-- Audio Elements -->
         <audio id="bgMusic" src="nhac_nen/canon.mp3" loop preload="auto"></audio>
         <audio id="diceSfx" src="nhac_nen/xucxac.mp3" preload="auto"></audio>
+        <audio id="winSfx" src="nhac_nen/chienthang.mp3" preload="auto"></audio>
+        <audio id="loseSfx" src="nhac_nen/thuacuoc.mp3" preload="auto"></audio>
 
         <!-- Music Toggle Button -->
         <button id="musicToggle" class="music-btn glass" onclick="toggleMusic()">
@@ -94,7 +97,7 @@
                             <tr>
                                 <th style="padding: 10px; text-align: left;">Từ vựng</th>
                                 <th style="padding: 10px; text-align: left;">Phiên âm</th>
-                                <th style="padding: 10px; text-align: center;">Kết quả</th>
+                                <th style="padding: 10px; text-align: left;">Nghĩa</th>
                             </tr>
                         </thead>
                         <tbody id="reviewBody"></tbody>

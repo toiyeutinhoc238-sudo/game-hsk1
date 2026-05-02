@@ -1,10 +1,26 @@
 document.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
-    const lessonId = parseInt(params.get('lesson')) || 1;
-    const questions = hsk1Questions[lessonId];
+    const topicName = params.get('topic');
+    const lessonId = parseInt(params.get('lesson'));
+    
+    let questions = [];
+    if (topicName) {
+        questions = generateQuestionsForTopic(decodeURIComponent(topicName));
+    } else if (lessonId) {
+        // Fallback for old lesson-based links if any
+        // Since we replaced questions.js, we might need a way to still handle lessons
+        // But for now, let's assume we use topics.
+        alert('Vui lòng chọn chủ đề từ trang chủ.');
+        window.location.href = 'index.html';
+        return;
+    } else {
+        alert('Không tìm thấy dữ liệu!');
+        window.location.href = 'index.html';
+        return;
+    }
 
-    if (!questions) {
-        alert('Lesson not found!');
+    if (!questions || questions.length === 0) {
+        alert('Không có câu hỏi cho chủ đề này!');
         window.location.href = 'index.html';
         return;
     }
@@ -55,8 +71,8 @@ document.addEventListener('DOMContentLoaded', () => {
             tile.onclick = () => handleTileClick(i);
             
             const q = questions[i % questions.length];
-            const word = q.vocab.split(' ')[0];
-            const pinyin = q.vocab.split(' ')[1] || '';
+            const word = q.word || q.vocab.split(' ')[0];
+            const pinyin = q.pinyin || q.vocab.split(' ')[1] || '';
             
             const coord = getCoord(i);
             tile.style.gridRow = coord.r + 1;
@@ -64,7 +80,6 @@ document.addEventListener('DOMContentLoaded', () => {
             
             tile.innerHTML = `
                 <div class="tile-char">${word}</div>
-                <div class="tile-pinyin">${pinyin}</div>
                 <div class="tile-index">${i}</div>
             `;
             boardGrid.appendChild(tile);
@@ -292,17 +307,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function checkWinCondition() {
-        if (thiefPos === 34) {
-            endGame('TRỘM ĐÃ TRỐN THOÁT!', 'Chúc mừng bạn đã về đích an toàn!');
-        } else if (policePos === thiefPos) {
-            endGame('CẢNH SÁT ĐÃ BẮT ĐƯỢC TRỘM!', 'Rất tiếc, bạn đã bị bắt!');
+        if (policePos === thiefPos) {
+            endGame('CẢNH SÁT ĐÃ BẮT ĐƯỢC TRỘM!', 'Rất tiếc, bạn đã bị bắt!', 'lose');
+        } else if (thiefPos === 34) {
+            endGame('TRỘM ĐÃ TRỐN THOÁT!', 'Chúc mừng bạn đã về đích an toàn!', 'win');
         }
     }
 
-    function endGame(title, msg) {
+    function endGame(title, msg, type) {
         gameOver = true;
         resultTitle.textContent = title;
         resultMessage.textContent = msg;
+
+        // Play Win/Lose Sound
+        if (type === 'win') {
+            const winSfx = document.getElementById('winSfx');
+            if (winSfx) winSfx.play();
+        } else if (type === 'lose') {
+            const loseSfx = document.getElementById('loseSfx');
+            if (loseSfx) loseSfx.play();
+        }
         
         // Populate Review Table
         const reviewBody = document.getElementById('reviewBody');
@@ -314,15 +338,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const row = document.createElement('tr');
             row.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
             
-            const word = q.vocab.split(' ')[0];
-            const pinyin = q.vocab.split(' ')[1] || '';
+            const word = q.word || q.vocab.split(' ')[0];
+            const pinyin = q.pinyin || q.vocab.split(' ')[1] || '';
+            const meaning = q.meaning || (q.vocab.split(' - ')[1] || '');
             
             row.innerHTML = `
                 <td style="padding: 10px; text-align: left;">${word}</td>
                 <td style="padding: 10px; text-align: left; opacity: 0.7;">${pinyin}</td>
-                <td style="padding: 10px; text-align: center;">
-                    ${result ? (result.isCorrect ? '<span style="color: var(--success)">✓ Đúng</span>' : '<span style="color: var(--error)">✗ Sai</span>') : '<span style="opacity: 0.3">-</span>'}
-                </td>
+                <td style="padding: 10px; text-align: left; font-size: 0.8rem; opacity: 0.7;">${meaning}</td>
             `;
             reviewBody.appendChild(row);
         });
