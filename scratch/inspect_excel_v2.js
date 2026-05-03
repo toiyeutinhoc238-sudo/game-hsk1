@@ -5,8 +5,9 @@ try {
     const workbook = XLSX.readFile(file);
     const sheet = workbook.Sheets[workbook.SheetNames[0]];
     const data = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-    console.log("Header row:", data[0]);
-    console.log("First data row:", data[1]);
+    data.slice(1, 5).forEach((row, i) => {
+        console.log(`Row ${i+1}:`, row[0], "| Words:", row[1]);
+    });
 } catch (e) {
     console.error("Error reading file:", e.message);
 }

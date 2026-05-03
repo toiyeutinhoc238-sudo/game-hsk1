@@ -11,7 +11,7 @@ const hsk1Vocab = [
     "type": "Số từ",
     "pinyin": "bā",
     "meaning": "tám",
-    "topic": "13. Số lượng & Đo lường"
+    "topic": "14. Số lượng & Đo lường"
   },
   {
     "word": "爸爸",
@@ -25,7 +25,7 @@ const hsk1Vocab = [
     "type": "Trợ từ",
     "pinyin": "ba",
     "meaning": "nào; nhé; chứ; thôi; đi",
-    "topic": "14. Công cụ ngữ pháp & Cấu trúc"
+    "topic": "15. Công cụ ngữ pháp & Cấu trúc"
   },
   {
     "word": "白天",
@@ -39,21 +39,21 @@ const hsk1Vocab = [
     "type": "Số từ",
     "pinyin": "bǎi",
     "meaning": "Một trăm",
-    "topic": "13. Số lượng & Đo lường"
+    "topic": "14. Số lượng & Đo lường"
   },
   {
     "word": "半",
     "type": "Số từ",
     "pinyin": "bàn",
     "meaning": "Một nửa",
-    "topic": "13. Số lượng & Đo lường"
+    "topic": "14. Số lượng & Đo lường"
   },
   {
     "word": "包子",
     "type": "Danh từ",
     "pinyin": "bāozi",
     "meaning": "bánh bao hấp nhân",
-    "topic": "16. Đồ ăn & Thức uống"
+    "topic": "17. Đồ ăn & Thức uống"
   },
   {
     "word": "杯",
@@ -74,7 +74,7 @@ const hsk1Vocab = [
     "type": "Lượng từ",
     "pinyin": "běn",
     "meaning": "vở; tập; cuốn; quyển (dùng cho sách vở sổ sách)",
-    "topic": "13. Số lượng & Đo lường"
+    "topic": "14. Số lượng & Đo lường"
   },
   {
     "word": "边",
@@ -102,35 +102,35 @@ const hsk1Vocab = [
     "type": "",
     "pinyin": "bú kèqi",
     "meaning": "Không có gì",
-    "topic": "14. Công cụ ngữ pháp & Cấu trúc"
+    "topic": "15. Công cụ ngữ pháp & Cấu trúc"
   },
   {
     "word": "不要",
     "type": "Phó từ",
     "pinyin": "búyào",
     "meaning": "không muốn",
-    "topic": "14. Công cụ ngữ pháp & Cấu trúc"
+    "topic": "15. Công cụ ngữ pháp & Cấu trúc"
   },
   {
     "word": "不",
     "type": "Phó từ",
     "pinyin": "bù",
     "meaning": "KHÔNG",
-    "topic": "14. Công cụ ngữ pháp & Cấu trúc"
+    "topic": "15. Công cụ ngữ pháp & Cấu trúc"
   },
   {
     "word": "菜",
     "type": "Danh từ",
     "pinyin": "cài",
     "meaning": "món ăn",
-    "topic": "16. Đồ ăn & Thức uống"
+    "topic": "17. Đồ ăn & Thức uống"
   },
   {
     "word": "茶",
     "type": "Danh từ",
     "pinyin": "chá",
     "meaning": "Trà",
-    "topic": "16. Đồ ăn & Thức uống"
+    "topic": "17. Đồ ăn & Thức uống"
   },
   {
     "word": "唱",
@@ -186,7 +186,7 @@ const hsk1Vocab = [
     "type": "Tính từ",
     "pinyin": "dà",
     "meaning": "to lớn",
-    "topic": "12. Miêu tả & Đánh giá"
+    "topic": "13. Miêu tả & Đánh giá"
   },
   {
     "word": "大家",
@@ -207,7 +207,7 @@ const hsk1Vocab = [
     "type": "Danh từ",
     "pinyin": "dàxuéshēng",
     "meaning": "sinh viên đại học",
-    "topic": "11. Công việc & Nghề nghiệp"
+    "topic": "12. Công việc & Nghề nghiệp"
   },
   {
     "word": "到",
@@ -221,7 +221,7 @@ const hsk1Vocab = [
     "type": "Trợ từ",
     "pinyin": "de",
     "meaning": "của",
-    "topic": "14. Công cụ ngữ pháp & Cấu trúc"
+    "topic": "15. Công cụ ngữ pháp & Cấu trúc"
   },
   {
     "word": "弟弟",
@@ -235,7 +235,7 @@ const hsk1Vocab = [
     "type": "Tiền tố",
     "pinyin": "dì",
     "meaning": "(tiền tố) đứng trước số thứ tự",
-    "topic": "13. Số lượng & Đo lường"
+    "topic": "14. Số lượng & Đo lường"
   },
   {
     "word": "点",
@@ -298,7 +298,7 @@ const hsk1Vocab = [
     "type": "Phó từ",
     "pinyin": "dōu",
     "meaning": "Tất cả",
-    "topic": "14. Công cụ ngữ pháp & Cấu trúc"
+    "topic": "15. Công cụ ngữ pháp & Cấu trúc"
   },
   {
     "word": "读",
@@ -319,28 +319,28 @@ const hsk1Vocab = [
     "type": "Tính từ, Giới từ",
     "pinyin": "duì",
     "meaning": "tính từ - đúng, phải giới từ - đối với...",
-    "topic": "12. Miêu tả & Đánh giá"
+    "topic": "13. Miêu tả & Đánh giá"
   },
   {
     "word": "对不起",
     "type": "Động từ",
     "pinyin": "duìbuqǐ",
     "meaning": "Xin lỗi",
-    "topic": "14. Công cụ ngữ pháp & Cấu trúc"
+    "topic": "1. Con người & Các mối quan hệ"
   },
   {
     "word": "多",
     "type": "Đại từ",
     "pinyin": "duō",
     "meaning": "nhiều",
-    "topic": "12. Miêu tả & Đánh giá"
+    "topic": "13. Miêu tả & Đánh giá"
   },
   {
     "word": "多少",
     "type": "Đại từ",
     "pinyin": "duōshao",
     "meaning": "Bao nhiêu",
-    "topic": "13. Số lượng & Đo lường"
+    "topic": "14. Số lượng & Đo lường"
   },
   {
     "word": "儿子",
@@ -354,14 +354,14 @@ const hsk1Vocab = [
     "type": "Số từ",
     "pinyin": "èr",
     "meaning": "hai",
-    "topic": "13. Số lượng & Đo lường"
+    "topic": "14. Số lượng & Đo lường"
   },
   {
     "word": "饭",
     "type": "Danh từ",
     "pinyin": "fàn",
     "meaning": "bữa ăn",
-    "topic": "16. Đồ ăn & Thức uống"
+    "topic": "17. Đồ ăn & Thức uống"
   },
   {
     "word": "饭店",
@@ -389,7 +389,7 @@ const hsk1Vocab = [
     "type": "Phó từ",
     "pinyin": "fēicháng",
     "meaning": "Rất",
-    "topic": "12. Miêu tả & Đánh giá"
+    "topic": "13. Miêu tả & Đánh giá"
   },
   {
     "word": "分",
@@ -410,7 +410,7 @@ const hsk1Vocab = [
     "type": "Danh từ",
     "pinyin": "fúwùyuán",
     "meaning": "phục vụ nam",
-    "topic": "11. Công việc & Nghề nghiệp"
+    "topic": "12. Công việc & Nghề nghiệp"
   },
   {
     "word": "高兴",
@@ -438,7 +438,7 @@ const hsk1Vocab = [
     "type": "Lượng từ",
     "pinyin": "gè",
     "meaning": "cái",
-    "topic": "13. Số lượng & Đo lường"
+    "topic": "14. Số lượng & Đo lường"
   },
   {
     "word": "给",
@@ -452,7 +452,7 @@ const hsk1Vocab = [
     "type": "Danh từ",
     "pinyin": "gōngzuò",
     "meaning": "Công việc",
-    "topic": "11. Công việc & Nghề nghiệp"
+    "topic": "12. Công việc & Nghề nghiệp"
   },
   {
     "word": "公司",
@@ -466,14 +466,14 @@ const hsk1Vocab = [
     "type": "Danh từ",
     "pinyin": "gǒu",
     "meaning": "chó",
-    "topic": "15. Tự nhiên"
+    "topic": "16. Tự nhiên"
   },
   {
     "word": "贵",
     "type": "Tính từ",
     "pinyin": "guì",
     "meaning": "đắt",
-    "topic": "12. Miêu tả & Đánh giá"
+    "topic": "13. Miêu tả & Đánh giá"
   },
   {
     "word": "国",
@@ -487,7 +487,7 @@ const hsk1Vocab = [
     "type": "Phó từ",
     "pinyin": "hái",
     "meaning": "vẫn",
-    "topic": "14. Công cụ ngữ pháp & Cấu trúc"
+    "topic": "15. Công cụ ngữ pháp & Cấu trúc"
   },
   {
     "word": "孩子",
@@ -501,42 +501,42 @@ const hsk1Vocab = [
     "type": "Tính từ",
     "pinyin": "hǎo",
     "meaning": "Tốt",
-    "topic": "12. Miêu tả & Đánh giá"
+    "topic": "13. Miêu tả & Đánh giá"
   },
   {
     "word": "好吃",
     "type": "Tính từ",
     "pinyin": "hǎochī",
     "meaning": "ngon",
-    "topic": "16. Đồ ăn & Thức uống"
+    "topic": "17. Đồ ăn & Thức uống"
   },
   {
     "word": "好看",
     "type": "Tính từ",
     "pinyin": "hǎokàn",
     "meaning": "Đẹp",
-    "topic": "12. Miêu tả & Đánh giá"
+    "topic": "13. Miêu tả & Đánh giá"
   },
   {
     "word": "好听",
     "type": "Tính từ",
     "pinyin": "hǎotīng",
     "meaning": "Nghe hay đấy.",
-    "topic": "12. Miêu tả & Đánh giá"
+    "topic": "13. Miêu tả & Đánh giá"
   },
   {
     "word": "好玩儿",
     "type": "Tính từ",
     "pinyin": "hǎowánr",
     "meaning": "Vui vẻ",
-    "topic": "12. Miêu tả & Đánh giá"
+    "topic": "13. Miêu tả & Đánh giá"
   },
   {
     "word": "号",
     "type": "Lượng từ, Danh từ",
     "pinyin": "hào",
     "meaning": "lượng từ: dùng cho ngày (ngày tháng)；danh từ: số",
-    "topic": "13. Số lượng & Đo lường"
+    "topic": "14. Số lượng & Đo lường"
   },
   {
     "word": "喝",
@@ -550,14 +550,14 @@ const hsk1Vocab = [
     "type": "Liên từ, Giới từ",
     "pinyin": "hé",
     "meaning": "Và",
-    "topic": "14. Công cụ ngữ pháp & Cấu trúc"
+    "topic": "15. Công cụ ngữ pháp & Cấu trúc"
   },
   {
     "word": "很",
     "type": "Phó từ",
     "pinyin": "hěn",
     "meaning": "rất",
-    "topic": "14. Công cụ ngữ pháp & Cấu trúc"
+    "topic": "15. Công cụ ngữ pháp & Cấu trúc"
   },
   {
     "word": "后",
@@ -578,7 +578,7 @@ const hsk1Vocab = [
     "type": "Động từ năng nguyện",
     "pinyin": "huì",
     "meaning": "biết",
-    "topic": "14. Công cụ ngữ pháp & Cấu trúc"
+    "topic": "4. Tư duy & Nhận thức"
   },
   {
     "word": "火车",
@@ -599,21 +599,21 @@ const hsk1Vocab = [
     "type": "Danh từ",
     "pinyin": "jīdàn",
     "meaning": "trứng",
-    "topic": "16. Đồ ăn & Thức uống"
+    "topic": "17. Đồ ăn & Thức uống"
   },
   {
     "word": "几",
     "type": "Đại từ, Số từ",
     "pinyin": "jǐ",
     "meaning": "bao nhiêu; một vài",
-    "topic": "13. Số lượng & Đo lường"
+    "topic": "14. Số lượng & Đo lường"
   },
   {
     "word": "家",
     "type": "Danh từ, Lượng từ",
     "pinyin": "jiā",
     "meaning": "gia đình; lượng từ cho cửa hàng",
-    "topic": "7. Địa điểm & Nơi chốn"
+    "topic": "15. Công cụ ngữ pháp & Cấu trúc"
   },
   {
     "word": "家人",
@@ -641,7 +641,7 @@ const hsk1Vocab = [
     "type": "Danh từ",
     "pinyin": "jiǎozi",
     "meaning": "bánh bao",
-    "topic": "16. Đồ ăn & Thức uống"
+    "topic": "17. Đồ ăn & Thức uống"
   },
   {
     "word": "叫",
@@ -669,7 +669,7 @@ const hsk1Vocab = [
     "type": "Lượng từ",
     "pinyin": "jīn",
     "meaning": "cân",
-    "topic": "13. Số lượng & Đo lường"
+    "topic": "14. Số lượng & Đo lường"
   },
   {
     "word": "今年",
@@ -690,7 +690,7 @@ const hsk1Vocab = [
     "type": "Đại từ",
     "pinyin": "jiǔ",
     "meaning": "Chín",
-    "topic": "13. Số lượng & Đo lường"
+    "topic": "14. Số lượng & Đo lường"
   },
   {
     "word": "觉得",
@@ -739,21 +739,21 @@ const hsk1Vocab = [
     "type": "Động từ năng nguyện",
     "pinyin": "kěyǐ",
     "meaning": "Có thể",
-    "topic": "14. Công cụ ngữ pháp & Cấu trúc"
+    "topic": "15. Công cụ ngữ pháp & Cấu trúc"
   },
   {
     "word": "口",
     "type": "Lượng từ",
     "pinyin": "kǒu",
     "meaning": "người; thành viên",
-    "topic": "13. Số lượng & Đo lường"
+    "topic": "14. Số lượng & Đo lường"
   },
   {
     "word": "块",
     "type": "Lượng từ",
     "pinyin": "kuài",
     "meaning": "lượng từ dùng cho tiền giấy",
-    "topic": "13. Số lượng & Đo lường"
+    "topic": "14. Số lượng & Đo lường"
   },
   {
     "word": "来",
@@ -767,21 +767,21 @@ const hsk1Vocab = [
     "type": "Danh từ",
     "pinyin": "lǎoshī",
     "meaning": "giáo viên",
-    "topic": "11. Công việc & Nghề nghiệp"
+    "topic": "12. Công việc & Nghề nghiệp"
   },
   {
     "word": "了",
     "type": "Trợ từ",
     "pinyin": "le",
     "meaning": "Đã",
-    "topic": "14. Công cụ ngữ pháp & Cấu trúc"
+    "topic": "15. Công cụ ngữ pháp & Cấu trúc"
   },
   {
     "word": "冷",
     "type": "Tính từ",
     "pinyin": "lěng",
     "meaning": "lạnh lẽo",
-    "topic": "12. Miêu tả & Đánh giá"
+    "topic": "13. Miêu tả & Đánh giá"
   },
   {
     "word": "里",
@@ -795,21 +795,21 @@ const hsk1Vocab = [
     "type": "Số từ",
     "pinyin": "liǎng",
     "meaning": "hai",
-    "topic": "13. Số lượng & Đo lường"
+    "topic": "14. Số lượng & Đo lường"
   },
   {
     "word": "零",
     "type": "Số từ",
     "pinyin": "líng",
     "meaning": "số không",
-    "topic": "13. Số lượng & Đo lường"
+    "topic": "14. Số lượng & Đo lường"
   },
   {
     "word": "六",
     "type": "Số từ",
     "pinyin": "liù",
     "meaning": "sáu",
-    "topic": "13. Số lượng & Đo lường"
+    "topic": "14. Số lượng & Đo lường"
   },
   {
     "word": "妈妈",
@@ -823,7 +823,7 @@ const hsk1Vocab = [
     "type": "Trợ từ",
     "pinyin": "ma",
     "meaning": "Ma",
-    "topic": "14. Công cụ ngữ pháp & Cấu trúc"
+    "topic": "15. Công cụ ngữ pháp & Cấu trúc"
   },
   {
     "word": "买",
@@ -844,42 +844,42 @@ const hsk1Vocab = [
     "type": "Tính từ",
     "pinyin": "máng",
     "meaning": "bận",
-    "topic": "12. Miêu tả & Đánh giá"
+    "topic": "13. Miêu tả & Đánh giá"
   },
   {
     "word": "猫",
     "type": "Danh từ",
     "pinyin": "māo",
     "meaning": "con mèo",
-    "topic": "15. Tự nhiên"
+    "topic": "16. Tự nhiên"
   },
   {
     "word": "没",
     "type": "Phó từ",
     "pinyin": "méi",
     "meaning": "không có",
-    "topic": "14. Công cụ ngữ pháp & Cấu trúc"
+    "topic": "15. Công cụ ngữ pháp & Cấu trúc"
   },
   {
     "word": "没关系",
     "type": "",
     "pinyin": "méi guānxi",
     "meaning": "Điều đó không quan trọng",
-    "topic": "14. Công cụ ngữ pháp & Cấu trúc"
+    "topic": "15. Công cụ ngữ pháp & Cấu trúc"
   },
   {
     "word": "没事",
     "type": "Động từ",
     "pinyin": "méishì",
     "meaning": "không có gì",
-    "topic": "14. Công cụ ngữ pháp & Cấu trúc"
+    "topic": "15. Công cụ ngữ pháp & Cấu trúc"
   },
   {
     "word": "没有",
     "type": "Động từ",
     "pinyin": "méiyǒu",
     "meaning": "KHÔNG",
-    "topic": "14. Công cụ ngữ pháp & Cấu trúc"
+    "topic": "15. Công cụ ngữ pháp & Cấu trúc"
   },
   {
     "word": "妹妹",
@@ -900,21 +900,21 @@ const hsk1Vocab = [
     "type": "Danh từ",
     "pinyin": "mǐfàn",
     "meaning": "cơm",
-    "topic": "16. Đồ ăn & Thức uống"
+    "topic": "17. Đồ ăn & Thức uống"
   },
   {
     "word": "面包",
     "type": "Danh từ",
     "pinyin": "miànbāo",
     "meaning": "bánh mỳ",
-    "topic": "16. Đồ ăn & Thức uống"
+    "topic": "17. Đồ ăn & Thức uống"
   },
   {
     "word": "面条儿",
     "type": "Danh từ",
     "pinyin": "miàntiáor",
     "meaning": "mì",
-    "topic": "16. Đồ ăn & Thức uống"
+    "topic": "17. Đồ ăn & Thức uống"
   },
   {
     "word": "名字",
@@ -942,28 +942,28 @@ const hsk1Vocab = [
     "type": "Đại từ",
     "pinyin": "nǎ",
     "meaning": "Ở đâu",
-    "topic": "7. Địa điểm & Nơi chốn"
+    "topic": "15. Công cụ ngữ pháp & Cấu trúc"
   },
   {
     "word": "哪里",
     "type": "Đại từ",
     "pinyin": "nǎlǐ",
     "meaning": "Ở đâu",
-    "topic": "9. Không gian & Vị trí"
+    "topic": "15. Công cụ ngữ pháp & Cấu trúc"
   },
   {
     "word": "哪儿",
     "type": "Đại từ",
     "pinyin": "nǎr",
     "meaning": "Ở đâu",
-    "topic": "7. Địa điểm & Nơi chốn"
+    "topic": "15. Công cụ ngữ pháp & Cấu trúc"
   },
   {
     "word": "那",
     "type": "Đại từ",
     "pinyin": "nà",
     "meaning": "Cái đó",
-    "topic": "14. Công cụ ngữ pháp & Cấu trúc"
+    "topic": "15. Công cụ ngữ pháp & Cấu trúc"
   },
   {
     "word": "那边",
@@ -977,14 +977,14 @@ const hsk1Vocab = [
     "type": "Đại từ",
     "pinyin": "nàlǐ",
     "meaning": "Ở đó",
-    "topic": "7. Địa điểm & Nơi chốn"
+    "topic": "15. Công cụ ngữ pháp & Cấu trúc"
   },
   {
     "word": "那儿",
     "type": "Đại từ",
     "pinyin": "nàr",
     "meaning": "ở đó",
-    "topic": "7. Địa điểm & Nơi chốn"
+    "topic": "15. Công cụ ngữ pháp & Cấu trúc"
   },
   {
     "word": "男",
@@ -1005,14 +1005,14 @@ const hsk1Vocab = [
     "type": "Trợ từ",
     "pinyin": "ne",
     "meaning": "Trợ từ đặt cuối câu để khẳng định",
-    "topic": "14. Công cụ ngữ pháp & Cấu trúc"
+    "topic": "15. Công cụ ngữ pháp & Cấu trúc"
   },
   {
     "word": "能",
     "type": "Động từ năng nguyện",
     "pinyin": "néng",
     "meaning": "có thể",
-    "topic": "14. Công cụ ngữ pháp & Cấu trúc"
+    "topic": "15. Công cụ ngữ pháp & Cấu trúc"
   },
   {
     "word": "你",
@@ -1026,13 +1026,13 @@ const hsk1Vocab = [
     "type": "",
     "pinyin": "nǐ hǎo",
     "meaning": "Xin chào",
-    "topic": "14. Công cụ ngữ pháp & Cấu trúc"
+    "topic": "15. Công cụ ngữ pháp & Cấu trúc"
   },
   {
     "word": "你们",
     "type": "Đại từ",
     "pinyin": "nǐmen",
-    "meaning": "Bạn",
+    "meaning": "Các bạn",
     "topic": "1. Con người & Các mối quan hệ"
   },
   {
@@ -1046,7 +1046,7 @@ const hsk1Vocab = [
     "word": "您",
     "type": "Đại từ",
     "pinyin": "nín",
-    "meaning": "Bạn",
+    "meaning": "ngài",
     "topic": "1. Con người & Các mối quan hệ"
   },
   {
@@ -1054,7 +1054,7 @@ const hsk1Vocab = [
     "type": "Danh từ",
     "pinyin": "niúnǎi",
     "meaning": "sữa",
-    "topic": "16. Đồ ăn & Thức uống"
+    "topic": "17. Đồ ăn & Thức uống"
   },
   {
     "word": "女",
@@ -1081,7 +1081,7 @@ const hsk1Vocab = [
     "word": "女士",
     "type": "Danh từ",
     "pinyin": "nǚshì",
-    "meaning": "Cô",
+    "meaning": "cô, quý cô",
     "topic": "1. Con người & Các mối quan hệ"
   },
   {
@@ -1096,28 +1096,28 @@ const hsk1Vocab = [
     "type": "Tính từ",
     "pinyin": "piányi",
     "meaning": "Rẻ",
-    "topic": "12. Miêu tả & Đánh giá"
+    "topic": "13. Miêu tả & Đánh giá"
   },
   {
     "word": "漂亮",
     "type": "Tính từ",
     "pinyin": "piàoliang",
     "meaning": "đẹp",
-    "topic": "12. Miêu tả & Đánh giá"
+    "topic": "13. Miêu tả & Đánh giá"
   },
   {
     "word": "苹果",
     "type": "Danh từ",
     "pinyin": "píngguǒ",
     "meaning": "quả táo",
-    "topic": "16. Đồ ăn & Thức uống"
+    "topic": "17. Đồ ăn & Thức uống"
   },
   {
     "word": "七",
     "type": "Số từ",
     "pinyin": "qī",
     "meaning": "bảy",
-    "topic": "13. Số lượng & Đo lường"
+    "topic": "14. Số lượng & Đo lường"
   },
   {
     "word": "起床",
@@ -1131,7 +1131,7 @@ const hsk1Vocab = [
     "type": "Số từ",
     "pinyin": "qiān",
     "meaning": "nghìn",
-    "topic": "13. Số lượng & Đo lường"
+    "topic": "14. Số lượng & Đo lường"
   },
   {
     "word": "前",
@@ -1159,7 +1159,7 @@ const hsk1Vocab = [
     "type": "Động từ",
     "pinyin": "qǐng",
     "meaning": "Xin vui lòng",
-    "topic": "14. Công cụ ngữ pháp & Cấu trúc"
+    "topic": "15. Công cụ ngữ pháp & Cấu trúc"
   },
   {
     "word": "请问",
@@ -1187,13 +1187,13 @@ const hsk1Vocab = [
     "type": "Tính từ",
     "pinyin": "rè",
     "meaning": "nóng",
-    "topic": "12. Miêu tả & Đánh giá"
+    "topic": "13. Miêu tả & Đánh giá"
   },
   {
     "word": "人",
     "type": "Danh từ",
     "pinyin": "rén",
-    "meaning": "mọi người",
+    "meaning": "người",
     "topic": "1. Con người & Các mối quan hệ"
   },
   {
@@ -1215,7 +1215,7 @@ const hsk1Vocab = [
     "type": "Số từ",
     "pinyin": "sān",
     "meaning": "ba",
-    "topic": "13. Số lượng & Đo lường"
+    "topic": "14. Số lượng & Đo lường"
   },
   {
     "word": "商店",
@@ -1236,14 +1236,14 @@ const hsk1Vocab = [
     "type": "Động từ",
     "pinyin": "shàngbān",
     "meaning": "công việc",
-    "topic": "11. Công việc & Nghề nghiệp"
+    "topic": "12. Công việc & Nghề nghiệp"
   },
   {
     "word": "上课",
     "type": "Động từ",
     "pinyin": "shàngkè",
     "meaning": "Tham gia lớp học",
-    "topic": "11. Công việc & Nghề nghiệp"
+    "topic": "12. Công việc & Nghề nghiệp"
   },
   {
     "word": "上午",
@@ -1257,14 +1257,14 @@ const hsk1Vocab = [
     "type": "Động từ",
     "pinyin": "shàngxué",
     "meaning": "đi học",
-    "topic": "11. Công việc & Nghề nghiệp"
+    "topic": "12. Công việc & Nghề nghiệp"
   },
   {
     "word": "少",
     "type": "Tính từ",
     "pinyin": "shǎo",
-    "meaning": "một vài",
-    "topic": "12. Miêu tả & Đánh giá"
+    "meaning": "ít",
+    "topic": "13. Miêu tả & Đánh giá"
   },
   {
     "word": "谁",
@@ -1278,7 +1278,7 @@ const hsk1Vocab = [
     "type": "Đại từ",
     "pinyin": "shénme",
     "meaning": "Cái gì",
-    "topic": "14. Công cụ ngữ pháp & Cấu trúc"
+    "topic": "15. Công cụ ngữ pháp & Cấu trúc"
   },
   {
     "word": "生病",
@@ -1292,7 +1292,7 @@ const hsk1Vocab = [
     "type": "Số từ",
     "pinyin": "shí",
     "meaning": "mười",
-    "topic": "13. Số lượng & Đo lường"
+    "topic": "14. Số lượng & Đo lường"
   },
   {
     "word": "时候",
@@ -1320,7 +1320,7 @@ const hsk1Vocab = [
     "type": "Động từ",
     "pinyin": "shì",
     "meaning": "Đúng",
-    "topic": "14. Công cụ ngữ pháp & Cấu trúc"
+    "topic": "15. Công cụ ngữ pháp & Cấu trúc"
   },
   {
     "word": "手机",
@@ -1334,7 +1334,7 @@ const hsk1Vocab = [
     "type": "Danh từ",
     "pinyin": "shòuhuòyuán",
     "meaning": "Nhân viên bán hàng",
-    "topic": "11. Công việc & Nghề nghiệp"
+    "topic": "12. Công việc & Nghề nghiệp"
   },
   {
     "word": "书",
@@ -1355,14 +1355,14 @@ const hsk1Vocab = [
     "type": "Danh từ",
     "pinyin": "shuǐ",
     "meaning": "Nước",
-    "topic": "15. Tự nhiên"
+    "topic": "16. Tự nhiên"
   },
   {
     "word": "水果",
     "type": "Danh từ",
     "pinyin": "shuǐguǒ",
     "meaning": "hoa quả",
-    "topic": "16. Đồ ăn & Thức uống"
+    "topic": "17. Đồ ăn & Thức uống"
   },
   {
     "word": "睡",
@@ -1397,14 +1397,14 @@ const hsk1Vocab = [
     "type": "Số từ",
     "pinyin": "sì",
     "meaning": "Bốn",
-    "topic": "13. Số lượng & Đo lường"
+    "topic": "14. Số lượng & Đo lường"
   },
   {
     "word": "岁",
     "type": "Lượng từ",
     "pinyin": "suì",
     "meaning": "tuổi",
-    "topic": "13. Số lượng & Đo lường"
+    "topic": "14. Số lượng & Đo lường"
   },
   {
     "word": "他",
@@ -1446,21 +1446,21 @@ const hsk1Vocab = [
     "type": "Phó từ",
     "pinyin": "tài",
     "meaning": "cũng vậy",
-    "topic": "14. Công cụ ngữ pháp & Cấu trúc"
+    "topic": "15. Công cụ ngữ pháp & Cấu trúc"
   },
   {
     "word": "天",
     "type": "Danh từ, Lượng từ",
     "pinyin": "tiān",
     "meaning": "thời tiết, ngày",
-    "topic": "15. Tự nhiên"
+    "topic": "16. Tự nhiên"
   },
   {
     "word": "天气",
     "type": "Danh từ",
     "pinyin": "tiānqì",
     "meaning": "thời tiết",
-    "topic": "15. Tự nhiên"
+    "topic": "16. Tự nhiên"
   },
   {
     "word": "听",
@@ -1516,7 +1516,7 @@ const hsk1Vocab = [
     "type": "Danh từ",
     "pinyin": "wǎnfàn",
     "meaning": "bữa tối",
-    "topic": "16. Đồ ăn & Thức uống"
+    "topic": "17. Đồ ăn & Thức uống"
   },
   {
     "word": "晚上",
@@ -1529,8 +1529,8 @@ const hsk1Vocab = [
     "word": "喂",
     "type": "Thán từ",
     "pinyin": "wèi",
-    "meaning": "Xin chào",
-    "topic": "14. Công cụ ngữ pháp & Cấu trúc"
+    "meaning": "a lô",
+    "topic": "15. Công cụ ngữ pháp & Cấu trúc"
   },
   {
     "word": "问",
@@ -1550,7 +1550,7 @@ const hsk1Vocab = [
     "word": "我",
     "type": "Đại từ",
     "pinyin": "wǒ",
-    "meaning": "TÔI",
+    "meaning": "tôi",
     "topic": "1. Con người & Các mối quan hệ"
   },
   {
@@ -1565,14 +1565,14 @@ const hsk1Vocab = [
     "type": "Số từ",
     "pinyin": "wǔ",
     "meaning": "năm",
-    "topic": "13. Số lượng & Đo lường"
+    "topic": "14. Số lượng & Đo lường"
   },
   {
     "word": "午饭",
     "type": "Danh từ",
     "pinyin": "wǔfàn",
     "meaning": "bữa trưa",
-    "topic": "16. Đồ ăn & Thức uống"
+    "topic": "17. Đồ ăn & Thức uống"
   },
   {
     "word": "喜欢",
@@ -1593,14 +1593,14 @@ const hsk1Vocab = [
     "type": "Động từ",
     "pinyin": "xiàbān",
     "meaning": "tan ca làm việc",
-    "topic": "11. Công việc & Nghề nghiệp"
+    "topic": "12. Công việc & Nghề nghiệp"
   },
   {
     "word": "下课",
     "type": "Động từ",
     "pinyin": "xiàkè",
     "meaning": "Ra khỏi lớp học xong",
-    "topic": "11. Công việc & Nghề nghiệp"
+    "topic": "12. Công việc & Nghề nghiệp"
   },
   {
     "word": "下午",
@@ -1614,13 +1614,13 @@ const hsk1Vocab = [
     "type": "",
     "pinyin": "xiàyǔ",
     "meaning": "mưa",
-    "topic": "15. Tự nhiên"
+    "topic": "16. Tự nhiên"
   },
   {
     "word": "先生",
     "type": "Danh từ",
     "pinyin": "xiānsheng",
-    "meaning": "thưa quý ông",
+    "meaning": "ông, ngài",
     "topic": "1. Con người & Các mối quan hệ"
   },
   {
@@ -1642,7 +1642,7 @@ const hsk1Vocab = [
     "type": "Tính từ",
     "pinyin": "xiǎo",
     "meaning": "Bé nhỏ",
-    "topic": "12. Miêu tả & Đánh giá"
+    "topic": "13. Miêu tả & Đánh giá"
   },
   {
     "word": "小朋友",
@@ -1670,14 +1670,14 @@ const hsk1Vocab = [
     "type": "Danh từ",
     "pinyin": "xiǎoxuéshēng",
     "meaning": "học sinh tiểu học",
-    "topic": "11. Công việc & Nghề nghiệp"
+    "topic": "12. Công việc & Nghề nghiệp"
   },
   {
     "word": "些",
     "type": "Lượng từ",
     "pinyin": "xiē",
     "meaning": "một số",
-    "topic": "13. Số lượng & Đo lường"
+    "topic": "14. Số lượng & Đo lường"
   },
   {
     "word": "写",
@@ -1691,14 +1691,14 @@ const hsk1Vocab = [
     "type": "Động từ",
     "pinyin": "xièxie",
     "meaning": "Cảm ơn",
-    "topic": "14. Công cụ ngữ pháp & Cấu trúc"
+    "topic": "15. Công cụ ngữ pháp & Cấu trúc"
   },
   {
     "word": "新",
     "type": "Tính từ",
     "pinyin": "xīn",
     "meaning": "mới",
-    "topic": "12. Miêu tả & Đánh giá"
+    "topic": "13. Miêu tả & Đánh giá"
   },
   {
     "word": "星期",
@@ -1740,7 +1740,7 @@ const hsk1Vocab = [
     "type": "Danh từ",
     "pinyin": "xuésheng",
     "meaning": "học sinh",
-    "topic": "11. Công việc & Nghề nghiệp"
+    "topic": "12. Công việc & Nghề nghiệp"
   },
   {
     "word": "学习",
@@ -1761,7 +1761,7 @@ const hsk1Vocab = [
     "type": "Danh từ",
     "pinyin": "xuě",
     "meaning": "Tuyết",
-    "topic": "15. Tự nhiên"
+    "topic": "16. Tự nhiên"
   },
   {
     "word": "药",
@@ -1775,49 +1775,49 @@ const hsk1Vocab = [
     "type": "Động từ năng nguyện",
     "pinyin": "yào",
     "meaning": "muốn; cần, lấy",
-    "topic": "14. Công cụ ngữ pháp & Cấu trúc"
+    "topic": "15. Công cụ ngữ pháp & Cấu trúc"
   },
   {
     "word": "也",
     "type": "Phó từ",
     "pinyin": "yě",
     "meaning": "Mà còn",
-    "topic": "14. Công cụ ngữ pháp & Cấu trúc"
+    "topic": "15. Công cụ ngữ pháp & Cấu trúc"
   },
   {
     "word": "一",
     "type": "Số từ",
     "pinyin": "yī",
     "meaning": "một",
-    "topic": "13. Số lượng & Đo lường"
+    "topic": "14. Số lượng & Đo lường"
   },
   {
     "word": "一半",
     "type": "Số từ",
     "pinyin": "yíbàn",
     "meaning": "một nửa",
-    "topic": "13. Số lượng & Đo lường"
+    "topic": "14. Số lượng & Đo lường"
   },
   {
     "word": "一下",
     "type": "Lượng từ, Số từ",
     "pinyin": "yíxià",
     "meaning": "một lần",
-    "topic": "13. Số lượng & Đo lường"
+    "topic": "14. Số lượng & Đo lường"
   },
   {
     "word": "一点儿",
     "type": "Số từ",
     "pinyin": "yìdiǎnr",
     "meaning": "một chút",
-    "topic": "13. Số lượng & Đo lường"
+    "topic": "14. Số lượng & Đo lường"
   },
   {
     "word": "一些",
     "type": "Số từ",
     "pinyin": "yìxiē",
     "meaning": "Một số",
-    "topic": "13. Số lượng & Đo lường"
+    "topic": "14. Số lượng & Đo lường"
   },
   {
     "word": "衣服",
@@ -1831,14 +1831,14 @@ const hsk1Vocab = [
     "type": "Danh từ",
     "pinyin": "yī",
     "meaning": "y học",
-    "topic": "11. Công việc & Nghề nghiệp"
+    "topic": "12. Công việc & Nghề nghiệp"
   },
   {
     "word": "医生",
     "type": "Danh từ",
     "pinyin": "yīshēng",
     "meaning": "bác sĩ",
-    "topic": "11. Công việc & Nghề nghiệp"
+    "topic": "12. Công việc & Nghề nghiệp"
   },
   {
     "word": "医院",
@@ -1859,35 +1859,35 @@ const hsk1Vocab = [
     "type": "Động từ",
     "pinyin": "yǒu",
     "meaning": "có",
-    "topic": "13. Số lượng & Đo lường"
+    "topic": "14. Số lượng & Đo lường"
   },
   {
     "word": "有的",
     "type": "Đại từ",
     "pinyin": "yǒude",
     "meaning": "một số",
-    "topic": "13. Số lượng & Đo lường"
+    "topic": "14. Số lượng & Đo lường"
   },
   {
     "word": "有点儿",
     "type": "Phó từ",
     "pinyin": "yǒudiǎnr",
     "meaning": "có chút hơi...",
-    "topic": "13. Số lượng & Đo lường"
+    "topic": "14. Số lượng & Đo lường"
   },
   {
     "word": "有些",
     "type": "Đại từ",
     "pinyin": "yǒuxiē",
     "meaning": "một số",
-    "topic": "13. Số lượng & Đo lường"
+    "topic": "14. Số lượng & Đo lường"
   },
   {
     "word": "雨",
     "type": "Danh từ",
     "pinyin": "yǔ",
     "meaning": "cơn mưa",
-    "topic": "15. Tự nhiên"
+    "topic": "16. Tự nhiên"
   },
   {
     "word": "元",
@@ -1908,21 +1908,21 @@ const hsk1Vocab = [
     "type": "Phó từ",
     "pinyin": "zài",
     "meaning": "Lại",
-    "topic": "14. Công cụ ngữ pháp & Cấu trúc"
+    "topic": "15. Công cụ ngữ pháp & Cấu trúc"
   },
   {
     "word": "再见",
     "type": "Động từ",
     "pinyin": "zàijiàn",
     "meaning": "tạm biệt",
-    "topic": "14. Công cụ ngữ pháp & Cấu trúc"
+    "topic": "15. Công cụ ngữ pháp & Cấu trúc"
   },
   {
     "word": "在",
     "type": "Động từ, Phó từ",
     "pinyin": "zài",
     "meaning": "hiện hữu, đang diễn ra",
-    "topic": "14. Công cụ ngữ pháp & Cấu trúc"
+    "topic": "15. Công cụ ngữ pháp & Cấu trúc"
   },
   {
     "word": "早",
@@ -1936,28 +1936,28 @@ const hsk1Vocab = [
     "type": "Danh từ",
     "pinyin": "zǎofàn",
     "meaning": "bữa sáng",
-    "topic": "16. Đồ ăn & Thức uống"
+    "topic": "17. Đồ ăn & Thức uống"
   },
   {
     "word": "早上",
     "type": "Danh từ",
     "pinyin": "zǎoshang",
     "meaning": "Buổi sáng",
-    "topic": "15. Tự nhiên"
+    "topic": "10. Thời gian"
   },
   {
     "word": "怎么",
     "type": "Đại từ",
     "pinyin": "zěnme",
     "meaning": "Làm sao",
-    "topic": "14. Công cụ ngữ pháp & Cấu trúc"
+    "topic": "15. Công cụ ngữ pháp & Cấu trúc"
   },
   {
     "word": "怎么样",
     "type": "Đại từ",
     "pinyin": "zěnmeyàng",
     "meaning": "Thế nào?",
-    "topic": "14. Công cụ ngữ pháp & Cấu trúc"
+    "topic": "15. Công cụ ngữ pháp & Cấu trúc"
   },
   {
     "word": "找",
@@ -2006,13 +2006,13 @@ const hsk1Vocab = [
     "type": "Đại từ",
     "pinyin": "zhè",
     "meaning": "cái này",
-    "topic": "14. Công cụ ngữ pháp & Cấu trúc"
+    "topic": "15. Công cụ ngữ pháp & Cấu trúc"
   },
   {
     "word": "这边",
     "type": "Đại từ",
     "pinyin": "zhèbiān",
-    "meaning": "Theo cách này",
+    "meaning": "bên này",
     "topic": "9. Không gian & Vị trí"
   },
   {
@@ -2041,28 +2041,28 @@ const hsk1Vocab = [
     "type": "Đại từ",
     "pinyin": "zhèxiē",
     "meaning": "Những cái này",
-    "topic": "14. Công cụ ngữ pháp & Cấu trúc"
+    "topic": "15. Công cụ ngữ pháp & Cấu trúc"
   },
   {
     "word": "真",
     "type": "Phó từ",
     "pinyin": "zhēn",
     "meaning": "thật, rất",
-    "topic": "12. Miêu tả & Đánh giá"
+    "topic": "13. Miêu tả & Đánh giá"
   },
   {
     "word": "正在",
     "type": "Phó từ",
     "pinyin": "zhèngzài",
     "meaning": "Đang tiến hành",
-    "topic": "12. Miêu tả & Đánh giá"
+    "topic": "15. Công cụ ngữ pháp & Cấu trúc"
   },
   {
     "word": "只",
     "type": "Lượng từ",
     "pinyin": "zhī",
     "meaning": "lượng từ dùng cho con vật",
-    "topic": "13. Số lượng & Đo lường"
+    "topic": "14. Số lượng & Đo lường"
   },
   {
     "word": "知道",
@@ -2090,7 +2090,7 @@ const hsk1Vocab = [
     "type": "Danh từ",
     "pinyin": "zhōngxuéshēng",
     "meaning": "học sinh trung học",
-    "topic": "11. Công việc & Nghề nghiệp"
+    "topic": "12. Công việc & Nghề nghiệp"
   },
   {
     "word": "住",
@@ -2166,7 +2166,7 @@ const hsk1Vocab = [
     "word": "做饭",
     "type": "",
     "pinyin": "zuò fàn",
-    "meaning": "nấu cơm; nấu ăn",
+    "meaning": "nấu cơm",
     "topic": "5. Đời sống sinh hoạt"
   }
 ];
