@@ -92,7 +92,7 @@
                 <h3>${topic}</h3>
                 <div class="word-badge">${count} từ vựng</div>
             `;
-            card.onclick = () => window.location.href = `board_game.html?topic=${encodeURIComponent(topic)}`;
+            card.onclick = () => window.location.href = `board_game.html?topic=chude${index + 1}`;
             grid.appendChild(card);
         });
 

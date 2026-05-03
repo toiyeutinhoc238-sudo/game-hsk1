@@ -1,11 +1,29 @@
 document.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
-    const topicName = params.get('topic');
+    const topicParam = params.get('topic');
+    let topicName = "";
+
+    if (topicParam) {
+        if (topicParam.startsWith('chude')) {
+            const index = parseInt(topicParam.replace('chude', '')) - 1;
+            // Reconstruct the same sorted topics list as in index.html
+            const topicsList = [...new Set(hsk1Vocab.map(item => item.topic))].sort((a, b) => {
+                const numA = parseInt(a.split('.')[0]);
+                const numB = parseInt(b.split('.')[0]);
+                if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
+                return a.localeCompare(b);
+            });
+            topicName = topicsList[index];
+        } else {
+            topicName = decodeURIComponent(topicParam);
+        }
+    }
+
     const lessonId = parseInt(params.get('lesson'));
     
     let questions = [];
     if (topicName) {
-        questions = generateQuestionsForTopic(decodeURIComponent(topicName));
+        questions = generateQuestionsForTopic(topicName);
     } else if (lessonId) {
         // Fallback for old lesson-based links if any
         // Since we replaced questions.js, we might need a way to still handle lessons
