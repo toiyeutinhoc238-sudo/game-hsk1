@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const lessonId = parseInt(params.get('lesson'));
-    
+
     let questions = [];
     if (topicName) {
         questions = generateQuestionsForTopic(topicName);
@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let policePos = 34;
     let prevPos = 0; // For moving back on wrong answer
 
-    let currentTurn = 'thief'; 
+    let currentTurn = 'thief';
     let diceValue = 0;
     let stepsRemaining = 0;
     let isMoving = false;
@@ -84,21 +84,21 @@ document.addEventListener('DOMContentLoaded', () => {
     function initBoard() {
         // Clear only tiles, keep or recreate characters
         boardGrid.querySelectorAll('.tile').forEach(t => t.remove());
-        
+
         for (let i = 0; i < TOTAL_TILES; i++) {
             const tile = document.createElement('div');
             tile.className = 'tile';
             tile.id = `tile-${i}`;
             tile.onclick = () => handleTileClick(i);
-            
+
             const q = questions[i % questions.length];
             const word = q.word || q.vocab.split(' ')[0];
             const pinyin = q.pinyin || q.vocab.split(' ')[1] || '';
-            
+
             const coord = getCoord(i);
             tile.style.gridRow = coord.r + 1;
             tile.style.gridColumn = coord.c + 1;
-            
+
             tile.innerHTML = `
                 <div class="tile-char">${word}</div>
                 <div class="tile-index">${i}</div>
@@ -160,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function rollDice() {
         if (!canRoll || isMoving || gameOver) return;
         canRoll = false;
-        
+
         diceFace.classList.add('rolling');
         rollBtn.disabled = true;
 
@@ -181,26 +181,39 @@ document.addEventListener('DOMContentLoaded', () => {
             diceValue = Math.floor(Math.random() * 4) + 1;
             renderDice(diceValue);
             diceFace.classList.remove('rolling');
-            
+
             // Show question AFTER 2.5 seconds of rolling
             showQuestion();
         }, 2500);
     }
-    
+
     // Initial dice state
     renderDice(1);
 
     let currentQuestionIdx = 0; // Temporary to track which question was asked
+    let recentQuestions = [];
+
     function showQuestion() {
         // Pick a question (could be random from the lesson)
-        currentQuestionIdx = Math.floor(Math.random() * questions.length);
+        let maxAttempts = 50;
+        let limit = Math.min(4, Math.floor(questions.length / 2) || 1);
+        do {
+            currentQuestionIdx = Math.floor(Math.random() * questions.length);
+            maxAttempts--;
+        } while (recentQuestions.includes(currentQuestionIdx) && maxAttempts > 0);
+
+        recentQuestions.push(currentQuestionIdx);
+        if (recentQuestions.length > limit) {
+            recentQuestions.shift();
+        }
+
         const q = questions[currentQuestionIdx];
         const qIdx = currentQuestionIdx;
-        
+
         qText.textContent = q.q;
         qOptions.innerHTML = '';
         document.getElementById('tileName').textContent = "Xác nhận di chuyển";
-        
+
         q.a.forEach((opt, idx) => {
             const btn = document.createElement('button');
             btn.className = 'option-btn';
@@ -224,7 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         setTimeout(() => {
             questionOverlay.style.display = 'none';
-            
+
             // Record result for the review table
             const currentQ = questions[currentQuestionIdx];
             questionResults.set(currentQuestionIdx, {
@@ -247,10 +260,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function highlightPossibleMoves() {
         const currentPos = currentTurn === 'thief' ? thiefPos : policePos;
         const coord = getCoord(currentPos);
-        
+
         // Remove all highlights
         document.querySelectorAll('.tile').forEach(t => t.classList.remove('reachable'));
-        
+
         if (stepsRemaining > 0) {
             const neighbors = [
                 getIndex(coord.r - 1, coord.c),
@@ -258,7 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 getIndex(coord.r, coord.c - 1),
                 getIndex(coord.r, coord.c + 1)
             ];
-            
+
             neighbors.forEach(idx => {
                 if (idx !== -1) {
                     document.getElementById(`tile-${idx}`).classList.add('reachable');
@@ -269,7 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function handleTileClick(index) {
         if (stepsRemaining === 0 || isMoving) return;
-        
+
         const tile = document.getElementById(`tile-${index}`);
         if (!tile.classList.contains('reachable')) return;
 
@@ -279,7 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             policePos = index;
         }
-        
+
         stepsRemaining--;
         updatePositions();
 
@@ -309,7 +322,7 @@ document.addEventListener('DOMContentLoaded', () => {
             qTimerBar.style.width = `${(time / 15) * 100}%`;
             if (time <= 0) {
                 clearInterval(timer);
-                handleAnswer(-1, -1); 
+                handleAnswer(-1, -1);
             }
         }, 100);
     }
@@ -320,7 +333,7 @@ document.addEventListener('DOMContentLoaded', () => {
         turnBadge.className = `turn-badge ${currentTurn}-turn`;
         canRoll = true;
         rollBtn.disabled = false;
-        
+
         // Update stats turn look
         document.querySelectorAll('.stat-card').forEach(c => c.classList.remove('active-turn'));
         if (currentTurn === 'thief') document.querySelectorAll('.stat-card')[0].classList.add('active-turn');
@@ -348,21 +361,21 @@ document.addEventListener('DOMContentLoaded', () => {
             const loseSfx = document.getElementById('loseSfx');
             if (loseSfx) loseSfx.play();
         }
-        
+
         // Populate Review Table
         const reviewBody = document.getElementById('reviewBody');
         reviewBody.innerHTML = '';
-        
+
         // Show all questions in the lesson
         questions.forEach((q, idx) => {
             const result = questionResults.get(idx);
             const row = document.createElement('tr');
             row.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
-            
+
             const word = q.word || q.vocab.split(' ')[0];
             const pinyin = q.pinyin || q.vocab.split(' ')[1] || '';
             const meaning = q.meaning || (q.vocab.split(' - ')[1] || '');
-            
+
             row.innerHTML = `
                 <td style="padding: 10px; text-align: left;">${word}</td>
                 <td style="padding: 10px; text-align: left; opacity: 0.7;">${pinyin}</td>
@@ -383,7 +396,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const musicIcon = document.getElementById('musicIcon');
     let isMusicPlaying = false;
 
-    window.toggleMusic = function() {
+    window.toggleMusic = function () {
         if (!bgMusic) return;
         if (isMusicPlaying) {
             bgMusic.pause();

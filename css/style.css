@@ -25,7 +25,7 @@ body {
     min-height: 100vh;
     overflow-x: hidden;
     position: relative;
-    background-image: 
+    background-image:
         radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.2) 0px, transparent 50%),
         radial-gradient(at 100% 100%, rgba(14, 165, 233, 0.2) 0px, transparent 50%);
 }
@@ -52,8 +52,13 @@ body {
 }
 
 @keyframes float {
-    from { transform: translateY(100vh); }
-    to { transform: translateY(-100px); }
+    from {
+        transform: translateY(100vh);
+    }
+
+    to {
+        transform: translateY(-100px);
+    }
 }
 
 .container {
@@ -80,18 +85,21 @@ h1 {
     background: linear-gradient(135deg, #fff 0%, var(--secondary) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    letter-spacing: -0.5px; /* Reduced negative spacing to prevent accent clipping */
+    letter-spacing: -0.5px;
+    /* Reduced negative spacing to prevent accent clipping */
     text-transform: uppercase;
-    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3));
     line-height: 1.2;
 }
 
 .hero-subtitle {
     text-align: center;
     color: var(--text-muted);
-    font-size: 1.1rem; /* Slightly smaller for better fit */
+    font-size: 1.1rem;
+    /* Slightly smaller for better fit */
     margin-bottom: 4rem;
-    max-width: 800px; /* Increased to prevent word orphan */
+    max-width: 800px;
+    /* Increased to prevent word orphan */
     margin-left: auto;
     margin-right: auto;
     line-height: 1.6;
@@ -126,12 +134,10 @@ h1 {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(
-        120deg,
-        transparent,
-        rgba(255, 255, 255, 0.05),
-        transparent
-    );
+    background: linear-gradient(120deg,
+            transparent,
+            rgba(255, 255, 255, 0.05),
+            transparent);
     transition: 0.5s;
 }
 
@@ -209,7 +215,9 @@ h1 {
     transition: width 0.5s ease-out;
 }
 
-.player .progress-bar { background: linear-gradient(to right, var(--primary), var(--secondary)); }
+.player .progress-bar {
+    background: linear-gradient(to right, var(--primary), var(--secondary));
+}
 
 .question-container {
     padding: 3rem;
@@ -279,9 +287,20 @@ h1 {
 }
 
 @keyframes bounceScale {
-    0% { transform: scale(0.5); opacity: 0; }
-    50% { transform: scale(1.1); opacity: 1; }
-    100% { transform: scale(1); opacity: 0.8; }
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+
+    50% {
+        transform: scale(1.1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
 }
 
 /* Choice Markers */
@@ -296,12 +315,17 @@ h1 {
     font-size: 1.5rem;
     z-index: 5;
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    filter: drop-shadow(0 0 5px rgba(0,0,0,0.5));
+    filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.5));
 }
 
-.marker-player { left: 10px; }
+.marker-player {
+    left: 10px;
+}
 
-.option-btn.player-selected { border-color: var(--primary); box-shadow: 0 0 10px var(--primary); }
+.option-btn.player-selected {
+    border-color: var(--primary);
+    box-shadow: 0 0 10px var(--primary);
+}
 
 /* Status Bar */
 .status-msg {
@@ -365,14 +389,38 @@ h1 {
 }
 
 /* Custom Scrollbar */
-::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
 
 @media (max-width: 768px) {
-    .options-grid { grid-template-columns: 1fr; }
-    h1 { font-size: 2rem; }
-    .battle-header { flex-direction: column; gap: 1rem; }
-    .player-stats { width: 100%; }
+    .options-grid {
+        grid-template-columns: 1fr;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    .battle-header {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .player-stats {
+        width: 100%;
+    }
 }
