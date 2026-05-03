@@ -19,9 +19,8 @@ function generateQuestionsForTopic(topicName) {
         const isDuplicateMeaning = meaningCounts[mKey] > 1;
         
         // LOGIC: 
-        // 1. If meaning is shared by multiple words (e.g. "Ở đâu"), ALWAYS ask CN_TO_VN (Word -> Meaning).
-        // 2. If meaning is unique, pick 50/50 between CN_TO_VN and VN_TO_CN.
-        const qType = isDuplicateMeaning ? 'CN_TO_VN' : (Math.random() > 0.5 ? 'CN_TO_VN' : 'VN_TO_CN');
+        // Pick 50/50 between CN_TO_VN (Chinese -> Vietnamese) and VN_TO_CN (Vietnamese -> Chinese).
+        const qType = Math.random() > 0.5 ? 'CN_TO_VN' : 'VN_TO_CN';
         
         let questionText, options, correctIdx;
 
@@ -53,8 +52,8 @@ function generateQuestionsForTopic(topicName) {
             correctIdx = options.indexOf(item.meaning);
         } else {
             // Question: Vietnamese -> Options: Chinese words
-            // Get 3 distractors with DIFFERENT words
-            const others = hsk1Vocab.filter(v => v.word !== item.word);
+            // Get 3 distractors with DIFFERENT words and DIFFERENT meanings
+            const others = hsk1Vocab.filter(v => v.word !== item.word && v.meaning.toLowerCase().trim() !== mKey);
             const distractors = [];
             const usedWords = new Set([item.word]);
 
@@ -89,6 +88,12 @@ function generateQuestionsForTopic(topicName) {
         };
     });
 
+    // Shuffle the final questions pool
+    for (let i = questions.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [questions[i], questions[j]] = [questions[j], questions[i]];
+    }
+    
     return questions;
 }
 

@@ -6,8 +6,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (topicParam) {
         if (topicParam.startsWith('chude')) {
             const index = parseInt(topicParam.replace('chude', '')) - 1;
-            // Reconstruct the same sorted topics list as in index.html
-            const topicsList = [...new Set(hsk1Vocab.map(item => item.topic))].sort((a, b) => {
+            // Reconstruct the same sorted and filtered topics list as in index.html
+            const topicsList = [...new Set(hsk1Vocab.map(item => item.topic))].filter(topic => {
+                const count = hsk1Vocab.filter(i => i.topic === topic).length;
+                return count >= 9;
+            }).sort((a, b) => {
                 const numA = parseInt(a.split('.')[0]);
                 const numB = parseInt(b.split('.')[0]);
                 if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
