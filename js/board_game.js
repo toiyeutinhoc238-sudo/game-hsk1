@@ -407,4 +407,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         isMusicPlaying = !isMusicPlaying;
     };
+
+    window.closeInstructions = function () {
+        const modal = document.getElementById('instructionModal');
+        if (modal) modal.style.display = 'none';
+    };
 });

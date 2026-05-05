@@ -24,25 +24,6 @@
         </section>
     </div>
 
-    <!-- Instructions Modal -->
-    <div id="instructionModal" class="modal" style="display: flex;">
-        <div class="glass modal-content">
-            <h2 style="margin-bottom: 1.5rem; color: var(--secondary);">Hướng Dẫn Cách Chơi
-            </h2>
-            <div style="text-align: left; margin-bottom: 2rem; line-height: 1.6;">
-                <p>1. Chia làm 2 người hoặc 2 đội chơi: một bên là <b>Kẻ Trộm</b>, một bên là <b>Cảnh Sát</b>.</p>
-                <p>2. Kẻ Trộm bắt đầu từ ô số 0, Cảnh Sát bắt đầu từ ô số 34.</p>
-                <p>3. Hai bên luân phiên nhau đổ xúc xắc để lấy số bước đi.</p>
-                <p>4. <b>Xác nhận di chuyển:</b> Ngay sau khi đổ xúc xắc, bạn phải trả lời đúng một câu hỏi trắc nghiệm
-                    mới được phép di chuyển.</p>
-                <p>5. <b>Luật chơi:</b> Trả lời đúng sẽ được đi tiếp số bước tương ứng. Trả lời sai sẽ bị mất lượt!</p>
-                <p>6. <b>Chiến thắng:</b> Kẻ Trộm thắng nếu về được ô 34. Cảnh Sát thắng nếu đuổi kịp và bắt được Trộm.
-                </p>
-            </div>
-            <button class="btn-primary" onclick="closeInstructions()">Sẵn Sàng!</button>
-        </div>
-    </div>
-
     <script src="js/vocabulary_data.js"></script>
     <script>
         const grid = document.getElementById('lessonGrid');
@@ -98,10 +79,6 @@
             card.onclick = () => window.location.href = `board_game.html?topic=chude${index + 1}`;
             grid.appendChild(card);
         });
-
-        function closeInstructions() {
-            document.getElementById('instructionModal').style.display = 'none';
-        }
 
         // Generate background dots
         const bgDots = document.getElementById('bgDots');
