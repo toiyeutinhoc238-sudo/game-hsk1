@@ -62,6 +62,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let isMoving = false;
     let canRoll = true;
     let gameOver = false;
+    const MAX_TURNS = 10;
+    let thiefTurnCount = 1;
+    let policeTurnCount = 0;
     let questionResults = new Map(); // Track performance: index -> {correct: bool}
 
     // DOM Elements
@@ -252,7 +255,11 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 // Wrong: no movement, switch turn
                 stepsRemaining = 0;
-                switchTurn();
+                if (currentTurn === 'police' && policeTurnCount >= MAX_TURNS) {
+                    endGame('TRỘM THẮNG (HẾT LƯỢT)!', 'Cảnh sát trả lời sai ở lượt cuối và không bắt được trộm!', 'win');
+                } else {
+                    switchTurn();
+                }
             }
         }, 1500);
     }
@@ -328,8 +335,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function switchTurn() {
-        currentTurn = currentTurn === 'thief' ? 'police' : 'thief';
-        turnBadge.textContent = `Lượt của ${currentTurn === 'thief' ? 'TRỘM' : 'CẢNH SÁT'}`;
+        if (currentTurn === 'thief') {
+            currentTurn = 'police';
+            policeTurnCount++;
+        } else {
+            currentTurn = 'thief';
+            thiefTurnCount++;
+        }
+
+        const displayCount = currentTurn === 'thief' ? thiefTurnCount : policeTurnCount;
+        turnBadge.textContent = `Lượt của ${currentTurn === 'thief' ? 'TRỘM' : 'CẢNH SÁT'} (${displayCount}/${MAX_TURNS})`;
         turnBadge.className = `turn-badge ${currentTurn}-turn`;
         canRoll = true;
         rollBtn.disabled = false;
@@ -345,6 +360,9 @@ document.addEventListener('DOMContentLoaded', () => {
             endGame('CẢNH SÁT ĐÃ BẮT ĐƯỢC TRỘM!', 'Rất tiếc, bạn đã bị bắt!', 'lose');
         } else if (thiefPos === 34) {
             endGame('TRỘM ĐÃ TRỐN THOÁT!', 'Chúc mừng bạn đã về đích an toàn!', 'win');
+        } else if (policeTurnCount >= MAX_TURNS && currentTurn === 'police' && stepsRemaining === 0) {
+            // Police finished their 10th turn and didn't catch the thief
+            endGame('TRỘM THẮNG (HẾT LƯỢT)!', 'Cảnh sát không bắt được trộm sau 10 lượt!', 'win');
         }
     }
 
@@ -389,6 +407,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     rollBtn.onclick = rollDice;
     initBoard();
+    // Set initial badge text
+    turnBadge.textContent = `Lượt của TRỘM (1/${MAX_TURNS})`;
     window.onresize = updatePositions;
 
     // Music Logic
