@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (topicParam) {
         if (topicParam.startsWith('chude')) {
-            const index = parseInt(topicParam.replace('chude', '')) - 1;
             // Reconstruct the same sorted and filtered topics list as in index.html
             const topicsList = [...new Set(hsk1Vocab.map(item => item.topic))].filter(topic => {
                 const count = hsk1Vocab.filter(i => i.topic === topic).length;
@@ -13,10 +12,28 @@ document.addEventListener('DOMContentLoaded', () => {
             }).sort((a, b) => {
                 const numA = parseInt(a.split('.')[0]);
                 const numB = parseInt(b.split('.')[0]);
-                if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
+                if (!isNaN(numA) && !isNaN(numB)) {
+                    if (numA !== numB) return numA - numB;
+                }
                 return a.localeCompare(b);
             });
-            topicName = topicsList[index];
+
+            // Find the topic that matches the ID format
+            topicName = topicsList.find((t, idx) => {
+                const tNumMatch = t.match(/^(\d+)/);
+                const tNum = tNumMatch ? tNumMatch[1] : (idx + 1);
+                let tId = `chude${tNum}`;
+                if (t.includes('(Phần 1)')) tId += '_phan1';
+                else if (t.includes('(Phần 2)')) tId += '_phan2';
+                else if (t.includes('(Phần 3)')) tId += '_phan3';
+                return tId === topicParam;
+            });
+
+            // Fallback for old index-based links if not found
+            if (!topicName) {
+                const index = parseInt(topicParam.replace('chude', '')) - 1;
+                topicName = topicsList[index];
+            }
         } else {
             topicName = decodeURIComponent(topicParam);
         }

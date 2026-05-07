@@ -35,7 +35,9 @@
         }).sort((a, b) => {
             const numA = parseInt(a.split('.')[0]);
             const numB = parseInt(b.split('.')[0]);
-            if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
+            if (!isNaN(numA) && !isNaN(numB)) {
+                if (numA !== numB) return numA - numB;
+            }
             return a.localeCompare(b);
         });
 
@@ -76,7 +78,16 @@
                 <h3>${topic}</h3>
                 <div class="word-badge">${count} từ vựng</div>
             `;
-            card.onclick = () => window.location.href = `board_game.html?topic=chude${index + 1}`;
+
+            // Handle URL generation: chude[num] or chude[num]_phan[1|2]
+            const topicNumMatch = topic.match(/^(\d+)/);
+            const topicNum = topicNumMatch ? topicNumMatch[1] : (index + 1);
+            let topicId = `chude${topicNum}`;
+            if (topic.includes('(Phần 1)')) topicId += '_phan1';
+            else if (topic.includes('(Phần 2)')) topicId += '_phan2';
+            else if (topic.includes('(Phần 3)')) topicId += '_phan3';
+
+            card.onclick = () => window.location.href = `board_game.html?topic=${topicId}`;
             grid.appendChild(card);
         });
 

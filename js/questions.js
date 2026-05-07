@@ -31,12 +31,13 @@ function generateQuestionsForTopic(topicName) {
             const distractors = [];
             const usedMeanings = new Set([mKey]);
 
-            while (distractors.length < 3 && others.length > 0) {
-                const random = others[Math.floor(Math.random() * others.length)];
+            const shuffledOthers = [...others].sort(() => 0.5 - Math.random());
+            for (const random of shuffledOthers) {
                 const rMeaning = random.meaning.toLowerCase().trim();
                 if (!usedMeanings.has(rMeaning)) {
                     distractors.push(random.meaning);
                     usedMeanings.add(rMeaning);
+                    if (distractors.length >= 3) break;
                 }
             }
 
@@ -57,11 +58,12 @@ function generateQuestionsForTopic(topicName) {
             const distractors = [];
             const usedWords = new Set([item.word]);
 
-            while (distractors.length < 3 && others.length > 0) {
-                const random = others[Math.floor(Math.random() * others.length)];
+            const shuffledOthers = [...others].sort(() => 0.5 - Math.random());
+            for (const random of shuffledOthers) {
                 if (!usedWords.has(random.word)) {
                     distractors.push(random.word);
                     usedWords.add(random.word);
+                    if (distractors.length >= 3) break;
                 }
             }
 
