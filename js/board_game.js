@@ -346,7 +346,8 @@ document.addEventListener('DOMContentLoaded', () => {
             qTimerBar.style.width = `${(time / 15) * 100}%`;
             if (time <= 0) {
                 clearInterval(timer);
-                handleAnswer(-1, -1);
+                const currentQ = questions[currentQuestionIdx];
+                handleAnswer(-1, currentQ.correct);
             }
         }, 100);
     }
