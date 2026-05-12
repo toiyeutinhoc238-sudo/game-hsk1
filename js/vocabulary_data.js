@@ -220,7 +220,7 @@ const hsk1Vocab = [
     "word": "一下",
     "type": "Lượng từ, Số từ",
     "pinyin": "yíxià",
-    "meaning": "một lần",
+    "meaning": "một tí; một lúc",
     "topic": "14. Số lượng & Đo lường (Phần 3)"
   },
   {
@@ -486,7 +486,7 @@ const hsk1Vocab = [
     "word": "她们",
     "type": "Đại từ",
     "pinyin": "tāmen",
-    "meaning": "họ",
+    "meaning": "họ, các cô ấy",
     "topic": "1. Con người & Các mối quan hệ (Phần 2)"
   },
   {
@@ -619,7 +619,7 @@ const hsk1Vocab = [
     "word": "吗",
     "type": "Trợ từ",
     "pinyin": "ma",
-    "meaning": "Ma",
+    "meaning": "không; ư; à (dùng ở cuối câu để hỏi)",
     "topic": "15. Công cụ ngữ pháp & Cấu trúc (Phần 1)"
   },
   {
@@ -633,7 +633,7 @@ const hsk1Vocab = [
     "word": "没关系",
     "type": "",
     "pinyin": "méi guānxi",
-    "meaning": "Điều đó không quan trọng",
+    "meaning": "không sao đâu",
     "topic": "15. Công cụ ngữ pháp & Cấu trúc (Phần 1)"
   },
   {
@@ -647,7 +647,7 @@ const hsk1Vocab = [
     "word": "没有",
     "type": "Động từ",
     "pinyin": "méiyǒu",
-    "meaning": "KHÔNG",
+    "meaning": "không có",
     "topic": "15. Công cụ ngữ pháp & Cấu trúc (Phần 1)"
   },
   {
@@ -731,14 +731,14 @@ const hsk1Vocab = [
     "word": "是",
     "type": "Động từ",
     "pinyin": "shì",
-    "meaning": "Đúng",
+    "meaning": "là, đúng",
     "topic": "15. Công cụ ngữ pháp & Cấu trúc (Phần 2)"
   },
   {
     "word": "太",
     "type": "Phó từ",
     "pinyin": "tài",
-    "meaning": "cũng vậy",
+    "meaning": "rất, quá, lắm",
     "topic": "15. Công cụ ngữ pháp & Cấu trúc (Phần 2)"
   },
   {
@@ -766,7 +766,7 @@ const hsk1Vocab = [
     "word": "也",
     "type": "Phó từ",
     "pinyin": "yě",
-    "meaning": "Mà còn",
+    "meaning": "cũng",
     "topic": "15. Công cụ ngữ pháp & Cấu trúc (Phần 2)"
   },
   {
@@ -948,7 +948,7 @@ const hsk1Vocab = [
     "word": "现在",
     "type": "Danh từ",
     "pinyin": "xiànzài",
-    "meaning": "Hiện nay",
+    "meaning": "hiện nay, hiện tại",
     "topic": "10. Thời gian (Phần 2)"
   },
   {
@@ -1291,7 +1291,7 @@ const hsk1Vocab = [
     "word": "那边",
     "type": "Đại từ",
     "pinyin": "nàbiān",
-    "meaning": "ở đó",
+    "meaning": "ở đó, phía bên đó",
     "topic": "9. Không gian & Vị trí"
   },
   {
@@ -1683,7 +1683,7 @@ const hsk1Vocab = [
     "word": "车",
     "type": "Danh từ",
     "pinyin": "chē",
-    "meaning": "xe hơi",
+    "meaning": "xe",
     "topic": "8. Giao thông & Di chuyển"
   },
   {
@@ -1886,7 +1886,7 @@ const hsk1Vocab = [
     "word": "服务员",
     "type": "Danh từ",
     "pinyin": "fúwùyuán",
-    "meaning": "phục vụ nam",
+    "meaning": "nhân viên phục vụ",
     "topic": "12. Công việc & Nghề nghiệp"
   },
   {
@@ -1907,7 +1907,7 @@ const hsk1Vocab = [
     "word": "上班",
     "type": "Động từ",
     "pinyin": "shàngbān",
-    "meaning": "công việc",
+    "meaning": "đi làm",
     "topic": "12. Công việc & Nghề nghiệp"
   },
   {
@@ -1942,7 +1942,7 @@ const hsk1Vocab = [
     "word": "下课",
     "type": "Động từ",
     "pinyin": "xiàkè",
-    "meaning": "Ra khỏi lớp học xong",
+    "meaning": "tan học",
     "topic": "12. Công việc & Nghề nghiệp"
   },
   {
