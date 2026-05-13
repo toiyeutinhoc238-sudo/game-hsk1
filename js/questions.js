@@ -35,13 +35,13 @@ function generateQuestionsForTopic(topicName) {
             for (const random of shuffledOthers) {
                 const rMeaning = random.meaning.toLowerCase().trim();
                 if (!usedMeanings.has(rMeaning)) {
-                    distractors.push(random.meaning);
+                    distractors.push(random.meaning.toLowerCase());
                     usedMeanings.add(rMeaning);
                     if (distractors.length >= 3) break;
                 }
             }
 
-            const rawOptions = [item.meaning, ...distractors];
+            const rawOptions = [item.meaning.toLowerCase(), ...distractors];
             // Shuffle
             for (let i = rawOptions.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -50,7 +50,7 @@ function generateQuestionsForTopic(topicName) {
             
             questionText = `Nghĩa của từ "${item.word}" là gì?`;
             options = rawOptions;
-            correctIdx = options.indexOf(item.meaning);
+            correctIdx = options.indexOf(item.meaning.toLowerCase());
         } else {
             // Question: Vietnamese -> Options: Chinese words
             // Get 3 distractors with DIFFERENT words and DIFFERENT meanings
@@ -74,7 +74,7 @@ function generateQuestionsForTopic(topicName) {
                 [rawOptions[i], rawOptions[j]] = [rawOptions[j], rawOptions[i]];
             }
 
-            questionText = `Từ nào sau đây có nghĩa là "${item.meaning}"?`;
+            questionText = `Từ nào sau đây có nghĩa là "${item.meaning.toLowerCase()}"?`;
             options = rawOptions;
             correctIdx = options.indexOf(item.word);
         }
@@ -83,10 +83,10 @@ function generateQuestionsForTopic(topicName) {
             q: questionText,
             a: options,
             correct: correctIdx,
-            vocab: `${item.word} (${item.pinyin}) - ${item.meaning}`,
+            vocab: `${item.word} (${item.pinyin}) - ${item.meaning.toLowerCase()}`,
             word: item.word,
             pinyin: item.pinyin,
-            meaning: item.meaning
+            meaning: item.meaning.toLowerCase()
         };
     });
 

@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
         q.a.forEach((option, idx) => {
             const btn = document.createElement('button');
             btn.className = 'option-btn';
-            btn.textContent = option;
+            btn.textContent = option.toLowerCase();
             btn.onclick = () => handleChoice(idx);
             optionsGrid.appendChild(btn);
         });

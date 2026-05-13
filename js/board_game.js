@@ -237,7 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
         q.a.forEach((opt, idx) => {
             const btn = document.createElement('button');
             btn.className = 'option-btn';
-            btn.textContent = opt;
+            btn.textContent = opt.toLowerCase();
             btn.onclick = () => handleAnswer(idx, q.correct);
             qOptions.appendChild(btn);
         });
