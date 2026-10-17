@@ -100,6 +100,40 @@
     font-weight: 600;
 }
 
+#fullscreenToggleBtn.active {
+    background: rgba(14, 165, 233, 0.35);
+    border-color: #38bdf8;
+    color: #38bdf8;
+    box-shadow: 0 0 16px rgba(14, 165, 233, 0.5);
+}
+
+.game-toast {
+    position: fixed;
+    top: 60px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    background: rgba(15, 23, 42, 0.92);
+    border: 1px solid rgba(14, 165, 233, 0.5);
+    color: #38bdf8;
+    padding: 8px 18px;
+    border-radius: 30px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    z-index: 99999;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+}
+
+.game-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
 /* Zoom Controls Widget */
 .zoom-controls {
     display: flex;

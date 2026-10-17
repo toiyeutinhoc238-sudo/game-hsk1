@@ -22,6 +22,12 @@
 
         <header class="game-top-controls">
             <div class="top-controls-right">
+                <!-- Smart Fullscreen Toggle Button -->
+                <button class="control-btn glass" id="fullscreenToggleBtn" title="Mở to toàn màn hình (Phím F)" onclick="toggleSmartFullscreen()">
+                    <span id="fullscreenIcon">⛶</span>
+                    <span class="btn-text-sm" id="fullscreenText">Toàn màn hình</span>
+                </button>
+
                 <!-- Zoom Controls -->
                 <div class="zoom-controls glass" title="Chế độ phóng to / thu nhỏ bàn cờ">
                     <button class="zoom-btn" id="zoomOutBtn" title="Thu nhỏ (Ctrl -)" onclick="changeZoom(-0.1)">➖</button>
@@ -29,7 +35,6 @@
                     <button class="zoom-btn" id="zoomInBtn" title="Phóng to (Ctrl +)" onclick="changeZoom(0.1)">➕</button>
                     <button class="zoom-btn" id="zoomResetBtn" title="Khôi phục kích thước chuẩn (100%)" onclick="resetZoom()">↺</button>
                 </div>
-
 
                 <!-- Help / Rules Modal Toggle -->
                 <button class="control-btn glass" title="Xem hướng dẫn luật chơi" onclick="openInstructions()">
@@ -42,6 +47,9 @@
                 </button>
             </div>
         </header>
+
+        <!-- Floating Toast Notification for Fullscreen / Actions -->
+        <div id="gameToast" class="game-toast"></div>
 
         <aside class="game-sidebar glass">
             <div class="turn-indicator" id="turnIndicator">
@@ -184,7 +192,7 @@
                 <p>5. <b>Luật chơi:</b> Trả lời đúng sẽ được nhấp vào các ô phát sáng để đi tiếp số bước tương ứng. Trả lời sai sẽ bị mất lượt!</p>
                 <p>6. <b>Chiến thắng:</b> Kẻ Trộm thắng nếu về được ô 34. Cảnh Sát thắng nếu đuổi kịp và bắt được Trộm.</p>
                 <p>7. <b>Giới hạn lượt:</b> Mỗi bên có tối đa 10 lượt. Nếu sau 10 lượt Cảnh Sát không bắt được Trộm, Trộm sẽ thắng!</p>
-                <p>8. <b>Chế độ phóng to:</b> Bấm các nút <b>➕ / ➖</b> trên thanh công cụ để phóng to hoặc thu nhỏ bàn cờ theo ý muốn.</p>
+                <p>8. <b>Chế độ toàn màn hình & phóng to:</b> Bấm <b>⛶ Toàn màn hình</b> hoặc <b>➕ / ➖</b> trên thanh công cụ để mở to bàn cờ sắc nét theo ý muốn.</p>
             </div>
             <div style="display: flex; justify-content: center; gap: 1rem;">
                 <button class="btn-primary" onclick="closeInstructions()">Sẵn Sàng Chơi!</button>

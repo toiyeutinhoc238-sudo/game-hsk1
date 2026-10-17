@@ -266,6 +266,131 @@ document.addEventListener('DOMContentLoaded', () => {
         }, { passive: false });
     }
 
+    // ==========================================
+    // TOAST NOTIFICATION
+    // ==========================================
+    let toastTimeout = null;
+    window.showToast = function (message) {
+        const toast = document.getElementById('gameToast');
+        if (!toast) return;
+        toast.textContent = message;
+        toast.classList.add('show');
+        if (toastTimeout) clearTimeout(toastTimeout);
+        toastTimeout = setTimeout(() => {
+            toast.classList.remove('show');
+        }, 2200);
+    };
+
+    // ==========================================
+    // SMART FULLSCREEN / PHÓNG TOÀN MÀN HÌNH
+    // ==========================================
+    let isAppFullscreen = false;
+
+    window.toggleSmartFullscreen = function () {
+        if (navigator.vibrate) {
+            try { navigator.vibrate(30); } catch (e) {}
+        }
+
+        if (!isAppFullscreen) {
+            enterFullscreenMode();
+        } else {
+            exitFullscreenMode();
+        }
+    };
+
+    function enterFullscreenMode() {
+        isAppFullscreen = true;
+        document.body.classList.add('app-fullscreen-mode');
+
+        // Request native browser fullscreen if supported (Android, Desktop, iPadOS)
+        const docEl = document.documentElement;
+        const req = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
+        if (req) {
+            try {
+                const p = req.call(docEl);
+                if (p && typeof p.catch === 'function') {
+                    p.catch(err => {
+                        console.log("Native fullscreen fallback to CSS fullscreen:", err);
+                    });
+                }
+            } catch (err) {
+                console.log("Native fullscreen error handled:", err);
+            }
+        }
+
+        // Auto-scale board to maximize visibility across full screen
+        setTimeout(() => {
+            autoFitBoard();
+        }, 120);
+
+        updateFullscreenUI(true);
+        window.showToast("⛶ Đã bật chế độ Toàn Màn Hình");
+    }
+
+    function exitFullscreenMode() {
+        isAppFullscreen = false;
+        document.body.classList.remove('app-fullscreen-mode');
+
+        // Exit native fullscreen if active
+        if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement) {
+            const exit = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
+            if (exit) {
+                try {
+                    const p = exit.call(document);
+                    if (p && typeof p.catch === 'function') p.catch(() => {});
+                } catch (e) {}
+            }
+        }
+
+        // Restore normal zoom
+        window.resetZoom();
+
+        updateFullscreenUI(false);
+        window.showToast("🗗 Đã trở về màn hình chuẩn");
+    }
+
+    function updateFullscreenUI(active) {
+        const fsBtn = document.getElementById('fullscreenToggleBtn');
+        const fsIcon = document.getElementById('fullscreenIcon');
+        const fsText = document.getElementById('fullscreenText');
+
+        if (fsBtn) fsBtn.classList.toggle('active', active);
+        if (fsIcon) fsIcon.textContent = active ? '🗗' : '⛶';
+        if (fsText) fsText.textContent = active ? 'Thu nhỏ' : 'Toàn màn hình';
+        if (fsBtn) fsBtn.title = active ? 'Thu nhỏ lại (Phím F)' : 'Mở to toàn màn hình (Phím F)';
+    }
+
+    function autoFitBoard() {
+        if (!boardContainer || !boardGrid) return;
+
+        const containerW = boardContainer.clientWidth - 24;
+        const containerH = boardContainer.clientHeight - 24;
+        const boardW = boardGrid.offsetWidth || 500;
+        const boardH = boardGrid.offsetHeight || 500;
+
+        if (boardW > 0 && boardH > 0 && containerW > 0 && containerH > 0) {
+            const scaleX = containerW / boardW;
+            const scaleY = containerH / boardH;
+            let optimalScale = Math.min(scaleX, scaleY);
+            // Cap between 0.75 and 1.55
+            optimalScale = Math.min(1.55, Math.max(0.75, optimalScale));
+            zoomLevel = Math.round(optimalScale * 20) / 20;
+            applyZoom();
+        }
+    }
+
+    // Native fullscreen change listener (Esc key or browser UI exit)
+    const onFsChange = () => {
+        const isNativeFs = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
+        if (!isNativeFs && isAppFullscreen) {
+            exitFullscreenMode();
+        }
+    };
+    document.addEventListener('fullscreenchange', onFsChange);
+    document.addEventListener('webkitfullscreenchange', onFsChange);
+    document.addEventListener('mozfullscreenchange', onFsChange);
+    document.addEventListener('MSFullscreenChange', onFsChange);
+
     // Keyboard shortcuts for zoom & fullscreen
     document.addEventListener('keydown', (e) => {
         if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
@@ -276,6 +401,8 @@ document.addEventListener('DOMContentLoaded', () => {
             window.changeZoom(-0.1);
         } else if (e.key === '0') {
             window.resetZoom();
+        } else if (e.key === 'f' || e.key === 'F') {
+            window.toggleSmartFullscreen();
         } else if (e.key === ' ' && canRoll && !isMoving && !gameOver && stepsRemaining === 0) {
             e.preventDefault();
             rollDice();
