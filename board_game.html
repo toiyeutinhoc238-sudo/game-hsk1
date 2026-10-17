@@ -20,39 +20,84 @@
         <audio id="winSfx" src="nhac_nen/chienthang.mp3" preload="auto"></audio>
         <audio id="loseSfx" src="nhac_nen/thuacuoc.mp3" preload="auto"></audio>
 
-        <!-- Music Toggle Button -->
-        <button id="musicToggle" class="music-btn glass" onclick="toggleMusic()">
-            <span id="musicIcon">🔇</span>
-        </button>
+        <!-- Top Floating Game Controls (Zoom, Fullscreen, Music, Home, Help) -->
+        <header class="game-top-controls">
+            <div class="top-controls-left">
+                <button class="control-btn glass" title="Về trang chọn chủ đề" onclick="window.location.href='index.html'">
+                    🏠 <span class="btn-text-sm">Trang chủ</span>
+                </button>
+            </div>
+
+            <div class="top-controls-right">
+                <!-- Zoom Controls -->
+                <div class="zoom-controls glass" title="Chế độ phóng to / thu nhỏ bàn cờ">
+                    <button class="zoom-btn" id="zoomOutBtn" title="Thu nhỏ (Ctrl -)" onclick="changeZoom(-0.1)">➖</button>
+                    <span id="zoomLevelDisplay" class="zoom-level">100%</span>
+                    <button class="zoom-btn" id="zoomInBtn" title="Phóng to (Ctrl +)" onclick="changeZoom(0.1)">➕</button>
+                    <button class="zoom-btn" id="zoomResetBtn" title="Khôi phục kích thước chuẩn (100%)" onclick="resetZoom()">↺</button>
+                </div>
+
+                <!-- Fullscreen Toggle Button -->
+                <button class="control-btn glass" id="fullscreenBtn" title="Phóng to toàn màn hình (Phím F)" onclick="toggleFullscreen()">
+                    <span id="fullscreenIcon">⛶</span>
+                </button>
+
+                <!-- Help / Rules Modal Toggle -->
+                <button class="control-btn glass" title="Xem hướng dẫn luật chơi" onclick="openInstructions()">
+                    ❓
+                </button>
+
+                <!-- Music Toggle Button -->
+                <button id="musicToggle" class="control-btn glass" title="Bật/Tắt nhạc nền" onclick="toggleMusic()">
+                    <span id="musicIcon">🔇</span>
+                </button>
+            </div>
+        </header>
 
         <aside class="game-sidebar glass">
             <div class="turn-indicator" id="turnIndicator">
-                <div class="turn-badge thief-turn" id="turnBadge">Lượt của TRỘM</div>
+                <div class="turn-badge thief-turn" id="turnBadge">Lượt của TRỘM (1/10)</div>
             </div>
 
             <div class="dice-section">
-                <div class="dice-container" id="diceContainer">
+                <div class="dice-container" id="diceContainer" onclick="rollDice()">
                     <div id="diceFace" class="dice-face">
                         <!-- Dots will be added here via JS -->
                     </div>
                 </div>
-                <button class="btn-primary" id="rollBtn">ĐỔ XÚC XẮC</button>
+                <button class="btn-primary ready-pulse" id="rollBtn">ĐỔ XÚC XẮC</button>
+            </div>
+
+            <div class="status-box glass" id="gameStatusBox">
+                Bấm "ĐỔ XÚC XẮC" để bắt đầu lượt chơi!
+            </div>
+
+            <!-- Steps countdown during manual movement -->
+            <div id="movingInfoBox" class="moving-info-box glass" style="display: none;">
+                <span id="movingStepsText">Còn 0 bước</span>
+                <button class="btn-finish-steps" id="finishStepsBtn" onclick="finishMoveEarly()">Xong lượt đi</button>
             </div>
 
             <div class="stats-section">
-                <div class="stat-card glass">
+                <div class="stat-card glass active-turn" id="thiefStatCard">
                     <img src="assets/thief.png" alt="Thief" class="stat-avatar">
                     <div class="stat-info">
-                        <span>Trộm</span>
+                        <div class="stat-name-row">
+                            <span>Kẻ Trộm</span>
+                            <span id="thiefTileNum" class="tile-tag">Ô 0</span>
+                        </div>
                         <div class="progress-mini">
                             <div id="thiefProgress" style="width: 0%"></div>
                         </div>
                     </div>
                 </div>
-                <div class="stat-card glass">
+                <div class="stat-card glass" id="policeStatCard">
                     <img src="assets/police.png" alt="Police" class="stat-avatar">
                     <div class="stat-info">
-                        <span>Cảnh sát</span>
+                        <div class="stat-name-row">
+                            <span>Cảnh Sát</span>
+                            <span id="policeTileNum" class="tile-tag">Ô 34</span>
+                        </div>
                         <div class="progress-mini">
                             <div id="policeProgress" style="width: 0%"></div>
                         </div>
@@ -60,19 +105,23 @@
                 </div>
             </div>
 
-
+            <div class="hint-zoom-info">
+                💡 <i>Nhấp vào các ô phát sáng trên bàn cờ để di chuyển nhân vật. Khi không di chuyển, nhấp vào ô bất kỳ để phóng to từ vựng!</i>
+            </div>
         </aside>
 
-        <main class="board-container">
-            <div id="boardGrid" class="board-grid">
-                <!-- Tiles will be generated here -->
+        <main class="board-container" id="boardContainer">
+            <div class="board-wrapper" id="boardWrapper">
+                <div id="boardGrid" class="board-grid">
+                    <!-- Tiles will be generated here -->
 
-                <!-- Characters inside the grid -->
-                <div id="thiefChar" class="character thief-char">
-                    <img src="assets/thief.png" alt="Thief">
-                </div>
-                <div id="policeChar" class="character police-char">
-                    <img src="assets/police.png" alt="Police">
+                    <!-- Characters inside the grid -->
+                    <div id="thiefChar" class="character thief-char" title="Kẻ Trộm">
+                        <img src="assets/thief.png" alt="Thief">
+                    </div>
+                    <div id="policeChar" class="character police-char" title="Cảnh Sát">
+                        <img src="assets/police.png" alt="Police">
+                    </div>
                 </div>
             </div>
         </main>
@@ -89,6 +138,17 @@
             <div class="options-grid" id="qOptions">
                 <!-- Options -->
             </div>
+        </div>
+    </div>
+
+    <!-- Vocabulary Detail Modal (Click to zoom tile) -->
+    <div id="vocabModal" class="modal-overlay" style="display: none;" onclick="closeVocabModal(event)">
+        <div class="vocab-card glass" onclick="event.stopPropagation()">
+            <button class="vocab-close-btn" onclick="closeVocabModal()" title="Đóng">&times;</button>
+            <div class="vocab-badge" id="vocabTileBadge">Ô số 0</div>
+            <div class="vocab-char-large" id="vocabCharLarge">大</div>
+            <div class="vocab-pinyin-large" id="vocabPinyinLarge">dà</div>
+            <div class="vocab-meaning-large" id="vocabMeaningLarge">to, lớn</div>
         </div>
     </div>
 
@@ -114,8 +174,9 @@
                     </table>
                 </div>
             </div>
-            <div class="modal-btns" style="margin-top: 2rem; display: flex; justify-content: center;">
-                <button class="btn-primary" onclick="window.location.reload()">Chơi Lại</button>
+            <div class="modal-btns" style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: center;">
+                <button class="btn-primary" onclick="resetGameMatch()">Chơi Ván Mới</button>
+                <button class="btn-primary" style="background: var(--secondary);" onclick="window.location.href='index.html'">Đổi Chủ Đề</button>
             </div>
         </div>
     </div>
@@ -123,20 +184,19 @@
     <!-- Instructions Modal -->
     <div id="instructionModal" class="modal" style="display: flex;">
         <div class="glass modal-content">
-            <h2 style="margin-bottom: 1.5rem; color: var(--secondary);">Hướng Dẫn Cách Chơi
-            </h2>
-            <div style="text-align: left; margin-bottom: 2rem; line-height: 1.6;">
+            <h2 style="margin-bottom: 1.2rem; color: var(--secondary);">Hướng Dẫn Cách Chơi</h2>
+            <div style="text-align: left; margin-bottom: 1.5rem; line-height: 1.6; font-size: 0.95rem;">
                 <p>1. Chia làm 2 người hoặc 2 đội chơi: một bên là <b>Kẻ Trộm</b>, một bên là <b>Cảnh Sát</b>.</p>
                 <p>2. Kẻ Trộm bắt đầu từ ô số 0, Cảnh Sát bắt đầu từ ô số 34.</p>
                 <p>3. Hai bên luân phiên nhau đổ xúc xắc để lấy số bước đi.</p>
-                <p>4. <b>Xác nhận di chuyển:</b> Ngay sau khi đổ xúc xắc, bạn phải trả lời đúng một câu hỏi trắc nghiệm
-                    mới được phép di chuyển.</p>
-                <p>5. <b>Luật chơi:</b> Trả lời đúng sẽ được đi tiếp số bước tương ứng. Trả lời sai sẽ bị mất lượt!</p>
+                <p>4. <b>Xác nhận di chuyển:</b> Ngay sau khi đổ xúc xắc, bạn phải trả lời đúng một câu hỏi trắc nghiệm mới được phép di chuyển.</p>
+                <p>5. <b>Luật chơi:</b> Trả lời đúng sẽ được nhấp vào các ô phát sáng để đi tiếp số bước tương ứng. Trả lời sai sẽ bị mất lượt!</p>
                 <p>6. <b>Chiến thắng:</b> Kẻ Trộm thắng nếu về được ô 34. Cảnh Sát thắng nếu đuổi kịp và bắt được Trộm.</p>
                 <p>7. <b>Giới hạn lượt:</b> Mỗi bên có tối đa 10 lượt. Nếu sau 10 lượt Cảnh Sát không bắt được Trộm, Trộm sẽ thắng!</p>
+                <p>8. <b>Chế độ phóng to:</b> Bấm <b>➕/➖</b> hoặc nút <b>⛶ Toàn màn hình</b> trên thanh công cụ để phóng to bàn cờ theo ý muốn.</p>
             </div>
             <div style="display: flex; justify-content: center; gap: 1rem;">
-                <button class="btn-primary" onclick="closeInstructions()">Sẵn Sàng!</button>
+                <button class="btn-primary" onclick="closeInstructions()">Sẵn Sàng Chơi!</button>
             </div>
         </div>
     </div>

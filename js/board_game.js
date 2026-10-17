@@ -39,20 +39,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    const lessonId = parseInt(params.get('lesson'));
-
     let questions = [];
     if (topicName) {
         questions = generateQuestionsForTopic(topicName);
-    } else if (lessonId) {
-        // Fallback for old lesson-based links if any
-        // Since we replaced questions.js, we might need a way to still handle lessons
-        // But for now, let's assume we use topics.
-        alert('Vui lòng chọn chủ đề từ trang chủ.');
-        window.location.href = 'index.html';
-        return;
     } else {
-        alert('Không tìm thấy dữ liệu!');
+        alert('Vui lòng chọn chủ đề từ trang chủ!');
         window.location.href = 'index.html';
         return;
     }
@@ -63,15 +54,16 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // Game Constants
+    // ==========================================
+    // GAME CONSTANTS & STATE
+    // (Preserve exact original rules & mechanics)
+    // ==========================================
     const GRID_COLS = 7;
     const GRID_ROWS = 5;
-    const TOTAL_TILES = GRID_COLS * GRID_ROWS;
+    const TOTAL_TILES = GRID_COLS * GRID_ROWS; // 35 tiles (0 to 34)
 
-    // Game State
     let thiefPos = 0;
     let policePos = 34;
-    let prevPos = 0; // For moving back on wrong answer
 
     let currentTurn = 'thief';
     let diceValue = 0;
@@ -82,13 +74,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const MAX_TURNS = 10;
     let thiefTurnCount = 1;
     let policeTurnCount = 0;
-    let questionResults = new Map(); // Track performance: index -> {correct: bool}
 
-    // DOM Elements
+    let zoomLevel = 1.0;
+    let currentZoomedWord = "";
+    let questionResults = new Map(); // Track performance: index -> {vocab, isCorrect}
+
+    // ==========================================
+    // DOM ELEMENTS
+    // ==========================================
+    const boardContainer = document.getElementById('boardContainer');
+    const boardWrapper = document.getElementById('boardWrapper');
     const boardGrid = document.getElementById('boardGrid');
     const thiefChar = document.getElementById('thiefChar');
     const policeChar = document.getElementById('policeChar');
     const rollBtn = document.getElementById('rollBtn');
+    const diceContainer = document.getElementById('diceContainer');
+    const diceFace = document.getElementById('diceFace');
     const turnBadge = document.getElementById('turnBadge');
     const questionOverlay = document.getElementById('questionOverlay');
     const qText = document.getElementById('qText');
@@ -99,21 +100,43 @@ document.addEventListener('DOMContentLoaded', () => {
     const resultMessage = document.getElementById('resultMessage');
     const thiefProgress = document.getElementById('thiefProgress');
     const policeProgress = document.getElementById('policeProgress');
+    const thiefTileNum = document.getElementById('thiefTileNum');
+    const policeTileNum = document.getElementById('policeTileNum');
+    const gameStatusBox = document.getElementById('gameStatusBox');
+    const movingInfoBox = document.getElementById('movingInfoBox');
+    const movingStepsText = document.getElementById('movingStepsText');
+    const zoomLevelDisplay = document.getElementById('zoomLevelDisplay');
+    const thiefStatCard = document.getElementById('thiefStatCard');
+    const policeStatCard = document.getElementById('policeStatCard');
 
-    // Initialize Board
+    // ==========================================
+    // INITIALIZE BOARD
+    // ==========================================
     function initBoard() {
-        // Clear only tiles, keep or recreate characters
+        // Clear only tiles, preserve characters
         boardGrid.querySelectorAll('.tile').forEach(t => t.remove());
 
         for (let i = 0; i < TOTAL_TILES; i++) {
             const tile = document.createElement('div');
             tile.className = 'tile';
             tile.id = `tile-${i}`;
-            tile.onclick = () => handleTileClick(i);
+
+            if (i === 0) tile.classList.add('tile-start');
+            if (i === 34) tile.classList.add('tile-target');
 
             const q = questions[i % questions.length];
             const word = q.word || q.vocab.split(' ')[0];
-            const pinyin = q.pinyin || q.vocab.split(' ')[1] || '';
+            const pinyin = q.pinyin || '';
+            const meaning = q.meaning || '';
+
+            // Store info for tile inspection
+            tile.dataset.index = i;
+            tile.dataset.word = word;
+            tile.dataset.pinyin = pinyin;
+            tile.dataset.meaning = meaning;
+
+            // Handle user tile clicking (Manual movement when stepsRemaining > 0, otherwise view word)
+            tile.onclick = () => handleTileClick(i);
 
             const coord = getCoord(i);
             tile.style.gridRow = coord.r + 1;
@@ -151,11 +174,173 @@ document.addEventListener('DOMContentLoaded', () => {
         policeChar.style.gridRow = pCoord.r + 1;
         policeChar.style.gridColumn = pCoord.c + 1;
 
-        thiefProgress.style.width = `${(thiefPos / 34) * 100}%`;
-        policeProgress.style.width = `${(Math.abs(policePos - thiefPos) / 34) * 100}%`;
+        // Update progress bars & labels
+        if (thiefProgress) thiefProgress.style.width = `${(thiefPos / 34) * 100}%`;
+        if (policeProgress) policeProgress.style.width = `${((34 - policePos) / 34) * 100}%`;
+
+        if (thiefTileNum) thiefTileNum.textContent = `Ô ${thiefPos}`;
+        if (policeTileNum) policeTileNum.textContent = `Ô ${policePos}`;
     }
 
-    const diceFace = document.getElementById('diceFace');
+    function updateStatusBox(msg) {
+        if (gameStatusBox) {
+            gameStatusBox.textContent = msg;
+        }
+    }
+
+    // ==========================================
+    // AUDIO & SOUND FX
+    // ==========================================
+    const bgMusic = document.getElementById('bgMusic');
+    const musicIcon = document.getElementById('musicIcon');
+    let isMusicPlaying = false;
+
+    window.toggleMusic = function () {
+        if (!bgMusic) return;
+        if (isMusicPlaying) {
+            bgMusic.pause();
+            if (musicIcon) musicIcon.textContent = '🔇';
+        } else {
+            bgMusic.play().catch(e => console.log("Music blocked by browser policy"));
+            if (musicIcon) musicIcon.textContent = '🔊';
+        }
+        isMusicPlaying = !isMusicPlaying;
+    };
+
+    function playStepSound() {
+        try {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContext) return;
+            const ctx = new AudioContext();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(350, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(600, ctx.currentTime + 0.1);
+
+            gain.gain.setValueAtTime(0.2, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+
+            osc.start();
+            osc.stop(ctx.currentTime + 0.1);
+        } catch (e) {
+            // Audio context not allowed or blocked
+        }
+    }
+
+    // ==========================================
+    // ZOOM & FULLSCREEN SYSTEM (Chế độ phóng to)
+    // ==========================================
+    window.changeZoom = function (delta) {
+        zoomLevel = Math.round((zoomLevel + delta) * 10) / 10;
+        zoomLevel = Math.min(1.8, Math.max(0.6, zoomLevel));
+        applyZoom();
+    };
+
+    window.resetZoom = function () {
+        zoomLevel = 1.0;
+        applyZoom();
+    };
+
+    function applyZoom() {
+        if (boardWrapper) {
+            boardWrapper.style.transform = `scale(${zoomLevel})`;
+        }
+        if (zoomLevelDisplay) {
+            zoomLevelDisplay.textContent = `${Math.round(zoomLevel * 100)}%`;
+        }
+    }
+
+    // Mouse wheel zoom with Ctrl key
+    if (boardContainer) {
+        boardContainer.addEventListener('wheel', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                e.preventDefault();
+                const delta = e.deltaY < 0 ? 0.1 : -0.1;
+                window.changeZoom(delta);
+            }
+        }, { passive: false });
+    }
+
+    // Keyboard shortcuts for zoom & fullscreen
+    document.addEventListener('keydown', (e) => {
+        if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+
+        if (e.key === '+' || e.key === '=') {
+            window.changeZoom(0.1);
+        } else if (e.key === '-' || e.key === '_') {
+            window.changeZoom(-0.1);
+        } else if (e.key === '0') {
+            window.resetZoom();
+        } else if (e.key === 'f' || e.key === 'F') {
+            window.toggleFullscreen();
+        } else if (e.key === ' ' && canRoll && !isMoving && !gameOver && stepsRemaining === 0) {
+            e.preventDefault();
+            rollDice();
+        }
+    });
+
+    window.toggleFullscreen = function () {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(err => {
+                console.warn("Fullscreen error:", err);
+            });
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            }
+        }
+    };
+
+    document.addEventListener('fullscreenchange', () => {
+        const isFs = !!document.fullscreenElement;
+        const fsIcon = document.getElementById('fullscreenIcon');
+        if (fsIcon) fsIcon.textContent = isFs ? '🗗' : '⛶';
+        const fsBtn = document.getElementById('fullscreenBtn');
+        if (fsBtn) {
+            fsBtn.classList.toggle('active', isFs);
+            fsBtn.title = isFs ? 'Thoát toàn màn hình (F)' : 'Phóng to toàn màn hình (F)';
+        }
+    });
+
+    // ==========================================
+    // VOCABULARY DETAIL MODAL (Phóng to ô từ vựng)
+    // ==========================================
+    window.showVocabModal = function (index) {
+        if (stepsRemaining > 0) return; // Do not open while user is moving pieces
+        const tile = document.getElementById(`tile-${index}`);
+        if (!tile) return;
+
+        currentZoomedWord = tile.dataset.word || "";
+        const vocabModal = document.getElementById('vocabModal');
+        const vocabTileBadge = document.getElementById('vocabTileBadge');
+        const vocabCharLarge = document.getElementById('vocabCharLarge');
+        const vocabPinyinLarge = document.getElementById('vocabPinyinLarge');
+        const vocabMeaningLarge = document.getElementById('vocabMeaningLarge');
+
+        if (vocabTileBadge) vocabTileBadge.textContent = `Ô số ${index} / 34`;
+        if (vocabCharLarge) vocabCharLarge.textContent = tile.dataset.word;
+        if (vocabPinyinLarge) vocabPinyinLarge.textContent = tile.dataset.pinyin;
+        if (vocabMeaningLarge) vocabMeaningLarge.textContent = tile.dataset.meaning;
+
+        if (vocabModal) vocabModal.style.display = 'flex';
+    };
+
+    window.closeVocabModal = function (e) {
+        if (e && e.target && e.target.id !== 'vocabModal' && !e.target.classList.contains('vocab-close-btn')) {
+            return;
+        }
+        const vocabModal = document.getElementById('vocabModal');
+        if (vocabModal) vocabModal.style.display = 'none';
+    };
+
+    // ==========================================
+    // DICE LOGIC
+    // ==========================================
     const dotPositions = {
         1: [4],
         2: [0, 8],
@@ -177,12 +362,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Initial dice face
+    renderDice(1);
+
     function rollDice() {
-        if (!canRoll || isMoving || gameOver) return;
+        if (!canRoll || isMoving || gameOver || stepsRemaining > 0) return;
         canRoll = false;
 
         diceFace.classList.add('rolling');
         rollBtn.disabled = true;
+        rollBtn.classList.remove('ready-pulse');
+
+        updateStatusBox(`${currentTurn === 'thief' ? 'TRỘM' : 'CẢNH SÁT'} đang đổ xúc xắc...`);
 
         // Play dice sound
         const diceSfx = document.getElementById('diceSfx');
@@ -194,7 +385,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let rollInterval = setInterval(() => {
             const tempVal = Math.floor(Math.random() * 4) + 1;
             renderDice(tempVal);
-        }, 100);
+        }, 90);
 
         setTimeout(() => {
             clearInterval(rollInterval);
@@ -202,19 +393,19 @@ document.addEventListener('DOMContentLoaded', () => {
             renderDice(diceValue);
             diceFace.classList.remove('rolling');
 
-            // Show question AFTER 2.5 seconds of rolling
+            updateStatusBox(`Đổ được ${diceValue} điểm! Trả lời đúng để được di chuyển.`);
             showQuestion();
-        }, 2500);
+        }, 1600);
     }
 
-    // Initial dice state
-    renderDice(1);
-
-    let currentQuestionIdx = 0; // Temporary to track which question was asked
+    // ==========================================
+    // QUESTION LOGIC
+    // ==========================================
+    let currentQuestionIdx = 0;
     let recentQuestions = [];
+    let timer = null;
 
     function showQuestion() {
-        // Pick a question (could be random from the lesson)
         let maxAttempts = 50;
         let limit = Math.min(4, Math.floor(questions.length / 2) || 1);
         do {
@@ -228,11 +419,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const q = questions[currentQuestionIdx];
-        const qIdx = currentQuestionIdx;
 
         qText.textContent = q.q;
         qOptions.innerHTML = '';
-        document.getElementById('tileName').textContent = "Xác nhận di chuyển";
+        const tileNameSpan = document.getElementById('tileName');
+        if (tileNameSpan) {
+            tileNameSpan.textContent = `Xác nhận di chuyển (${currentTurn === 'thief' ? 'Kẻ Trộm' : 'Cảnh Sát'})`;
+        }
 
         q.a.forEach((opt, idx) => {
             const btn = document.createElement('button');
@@ -246,97 +439,6 @@ document.addEventListener('DOMContentLoaded', () => {
         startTimer();
     }
 
-    function handleAnswer(selected, correct) {
-        clearInterval(timer);
-        const btns = qOptions.querySelectorAll('.option-btn');
-        btns.forEach((btn, idx) => {
-            btn.disabled = true;
-            if (idx === correct) btn.classList.add('correct');
-            else if (idx === selected) btn.classList.add('wrong');
-        });
-
-        setTimeout(() => {
-            questionOverlay.style.display = 'none';
-
-            // Record result for the review table
-            const currentQ = questions[currentQuestionIdx];
-            questionResults.set(currentQuestionIdx, {
-                vocab: currentQ.vocab,
-                isCorrect: selected === correct
-            });
-
-            if (selected === correct) {
-                // Correct: allow movement for BOTH Thief and Police
-                stepsRemaining = diceValue;
-                highlightPossibleMoves();
-            } else {
-                // Wrong: no movement, switch turn
-                stepsRemaining = 0;
-                if (currentTurn === 'police' && policeTurnCount >= MAX_TURNS) {
-                    endGame('TRỘM THẮNG (HẾT LƯỢT)!', 'Cảnh sát trả lời sai ở lượt cuối và không bắt được trộm!', 'win');
-                } else {
-                    switchTurn();
-                }
-            }
-        }, 1500);
-    }
-
-    function highlightPossibleMoves() {
-        const currentPos = currentTurn === 'thief' ? thiefPos : policePos;
-        const coord = getCoord(currentPos);
-
-        // Remove all highlights
-        document.querySelectorAll('.tile').forEach(t => t.classList.remove('reachable'));
-
-        if (stepsRemaining > 0) {
-            const neighbors = [
-                getIndex(coord.r - 1, coord.c),
-                getIndex(coord.r + 1, coord.c),
-                getIndex(coord.r, coord.c - 1),
-                getIndex(coord.r, coord.c + 1)
-            ];
-
-            neighbors.forEach(idx => {
-                if (idx !== -1) {
-                    document.getElementById(`tile-${idx}`).classList.add('reachable');
-                }
-            });
-        }
-    }
-
-    function handleTileClick(index) {
-        if (stepsRemaining === 0 || isMoving) return;
-
-        const tile = document.getElementById(`tile-${index}`);
-        if (!tile.classList.contains('reachable')) return;
-
-        // Move the character whose turn it is
-        if (currentTurn === 'thief') {
-            thiefPos = index;
-        } else {
-            policePos = index;
-        }
-
-        stepsRemaining--;
-        updatePositions();
-
-        // Check for immediate win
-        if (policePos === thiefPos || (currentTurn === 'thief' && thiefPos === 34)) {
-            document.querySelectorAll('.tile').forEach(t => t.classList.remove('reachable'));
-            checkWinCondition();
-            return;
-        }
-
-        if (stepsRemaining > 0) {
-            highlightPossibleMoves();
-        } else {
-            document.querySelectorAll('.tile').forEach(t => t.classList.remove('reachable'));
-            checkWinCondition();
-            if (!gameOver) switchTurn();
-        }
-    }
-
-    let timer;
     function startTimer() {
         let time = 15;
         qTimerBar.style.width = '100%';
@@ -352,6 +454,139 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 100);
     }
 
+    function handleAnswer(selected, correct) {
+        clearInterval(timer);
+        const btns = qOptions.querySelectorAll('.option-btn');
+        btns.forEach((btn, idx) => {
+            btn.disabled = true;
+            if (idx === correct) btn.classList.add('correct');
+            else if (idx === selected) btn.classList.add('wrong');
+        });
+
+        const isCorrect = (selected === correct);
+
+        // Record result for review table
+        const currentQ = questions[currentQuestionIdx];
+        questionResults.set(currentQuestionIdx, {
+            vocab: currentQ.vocab,
+            isCorrect: isCorrect
+        });
+
+        setTimeout(() => {
+            questionOverlay.style.display = 'none';
+
+            if (isCorrect) {
+                // Correct answer: User manually selects reachable tiles to move!
+                stepsRemaining = diceValue;
+                if (movingInfoBox) {
+                    movingInfoBox.style.display = 'flex';
+                    movingStepsText.textContent = `Còn ${stepsRemaining} bước đi`;
+                }
+                updateStatusBox(`Chính xác! Nhấp vào các ô phát sáng trên bàn cờ để di chuyển (còn ${stepsRemaining} bước).`);
+                highlightPossibleMoves();
+            } else {
+                // Wrong answer: Lost turn!
+                stepsRemaining = 0;
+                if (movingInfoBox) movingInfoBox.style.display = 'none';
+                updateStatusBox(`Trả lời sai! Mất lượt di chuyển.`);
+
+                if (currentTurn === 'police' && policeTurnCount >= MAX_TURNS) {
+                    endGame('TRỘM THẮNG (HẾT LƯỢT)!', 'Cảnh sát trả lời sai ở lượt cuối và không bắt được trộm!', 'win');
+                } else {
+                    switchTurn();
+                }
+            }
+        }, 1200);
+    }
+
+    // ==========================================
+    // MANUAL TILE MOVEMENT (Original gameplay)
+    // ==========================================
+    function highlightPossibleMoves() {
+        const currentPos = currentTurn === 'thief' ? thiefPos : policePos;
+        const coord = getCoord(currentPos);
+
+        // Remove all reachable highlights
+        document.querySelectorAll('.tile').forEach(t => t.classList.remove('reachable'));
+
+        if (stepsRemaining > 0) {
+            const neighbors = [
+                getIndex(coord.r - 1, coord.c),
+                getIndex(coord.r + 1, coord.c),
+                getIndex(coord.r, coord.c - 1),
+                getIndex(coord.r, coord.c + 1)
+            ];
+
+            neighbors.forEach(idx => {
+                if (idx !== -1) {
+                    const el = document.getElementById(`tile-${idx}`);
+                    if (el) el.classList.add('reachable');
+                }
+            });
+        }
+    }
+
+    function handleTileClick(index) {
+        if (stepsRemaining > 0) {
+            // User is in the movement phase!
+            const tile = document.getElementById(`tile-${index}`);
+            if (!tile || !tile.classList.contains('reachable')) return;
+
+            // Move the active character
+            if (currentTurn === 'thief') {
+                thiefPos = index;
+            } else {
+                policePos = index;
+            }
+
+            stepsRemaining--;
+            updatePositions();
+            playStepSound();
+
+            // Check immediate win conditions
+            if (policePos === thiefPos) {
+                clearHighlightsAndEndMove();
+                endGame('CẢNH SÁT ĐÃ BẮT ĐƯỢC TRỘM!', 'Cảnh sát đã đuổi kịp và bắt được kẻ trộm!', 'lose');
+                return;
+            } else if (currentTurn === 'thief' && thiefPos === 34) {
+                clearHighlightsAndEndMove();
+                endGame('TRỘM ĐÃ TRỐN THOÁT!', 'Kẻ trộm đã về đích an toàn và tẩu thoát!', 'win');
+                return;
+            }
+
+            if (stepsRemaining > 0) {
+                if (movingStepsText) movingStepsText.textContent = `Còn ${stepsRemaining} bước đi`;
+                updateStatusBox(`Còn ${stepsRemaining} bước! Hãy chọn ô tiếp theo trên bàn cờ.`);
+                highlightPossibleMoves();
+            } else {
+                // Finished all steps -> Switch turn smoothly and enable dice for next turn!
+                clearHighlightsAndEndMove();
+                checkWinCondition();
+                if (!gameOver) switchTurn();
+            }
+        } else {
+            // Outside movement phase: Clicking a tile opens the Vocabulary Zoom Card
+            showVocabModal(index);
+        }
+    }
+
+    function clearHighlightsAndEndMove() {
+        document.querySelectorAll('.tile').forEach(t => t.classList.remove('reachable'));
+        if (movingInfoBox) movingInfoBox.style.display = 'none';
+    }
+
+    window.finishMoveEarly = function () {
+        if (stepsRemaining > 0) {
+            stepsRemaining = 0;
+            clearHighlightsAndEndMove();
+            checkWinCondition();
+            if (!gameOver) switchTurn();
+        }
+    };
+
+    // ==========================================
+    // SWITCH TURN & UI UPDATES
+    // ==========================================
     function switchTurn() {
         if (currentTurn === 'thief') {
             currentTurn = 'police';
@@ -361,35 +596,55 @@ document.addEventListener('DOMContentLoaded', () => {
             thiefTurnCount++;
         }
 
-        const displayCount = currentTurn === 'thief' ? thiefTurnCount : policeTurnCount;
-        turnBadge.textContent = `Lượt của ${currentTurn === 'thief' ? 'TRỘM' : 'CẢNH SÁT'} (${displayCount}/${MAX_TURNS})`;
-        turnBadge.className = `turn-badge ${currentTurn}-turn`;
-        canRoll = true;
-        rollBtn.disabled = false;
+        updateTurnUI();
 
-        // Update stats turn look
-        document.querySelectorAll('.stat-card').forEach(c => c.classList.remove('active-turn'));
-        if (currentTurn === 'thief') document.querySelectorAll('.stat-card')[0].classList.add('active-turn');
-        else document.querySelectorAll('.stat-card')[1].classList.add('active-turn');
+        // 100% GUARANTEE that the roll button is ready and enabled for turn 2 and onwards!
+        canRoll = true;
+        stepsRemaining = 0;
+        rollBtn.disabled = false;
+        rollBtn.classList.add('ready-pulse');
+
+        updateStatusBox(`Đến lượt của ${currentTurn === 'thief' ? 'KẺ TRỘM' : 'CẢNH SÁT'}! Bấm "ĐỔ XÚC XẮC".`);
+    }
+
+    function updateTurnUI() {
+        const displayCount = currentTurn === 'thief' ? thiefTurnCount : policeTurnCount;
+        if (turnBadge) {
+            turnBadge.textContent = `Lượt của ${currentTurn === 'thief' ? 'TRỘM' : 'CẢNH SÁT'} (${displayCount}/${MAX_TURNS})`;
+            turnBadge.className = `turn-badge ${currentTurn}-turn`;
+        }
+
+        if (thiefStatCard && policeStatCard) {
+            thiefStatCard.classList.toggle('active-turn', currentTurn === 'thief');
+            policeStatCard.classList.toggle('active-turn', currentTurn === 'police');
+        }
     }
 
     function checkWinCondition() {
         if (policePos === thiefPos) {
-            endGame('CẢNH SÁT ĐÃ BẮT ĐƯỢC TRỘM!', 'Rất tiếc, bạn đã bị bắt!', 'lose');
+            endGame('CẢNH SÁT ĐÃ BẮT ĐƯỢC TRỘM!', 'Cảnh sát đã đuổi kịp và bắt được kẻ trộm!', 'lose');
         } else if (thiefPos === 34) {
-            endGame('TRỘM ĐÃ TRỐN THOÁT!', 'Chúc mừng bạn đã về đích an toàn!', 'win');
+            endGame('TRỘM ĐÃ TRỐN THOÁT!', 'Kẻ trộm đã về đích an toàn và tẩu thoát!', 'win');
         } else if (policeTurnCount >= MAX_TURNS && currentTurn === 'police' && stepsRemaining === 0) {
-            // Police finished their 10th turn and didn't catch the thief
             endGame('TRỘM THẮNG (HẾT LƯỢT)!', 'Cảnh sát không bắt được trộm sau 10 lượt!', 'win');
         }
     }
 
+    // ==========================================
+    // END GAME & RESET MATCH
+    // ==========================================
     function endGame(title, msg, type) {
         gameOver = true;
+        canRoll = false;
+        stepsRemaining = 0;
+        clearHighlightsAndEndMove();
+        rollBtn.disabled = true;
+        rollBtn.classList.remove('ready-pulse');
+
         resultTitle.textContent = title;
         resultMessage.textContent = msg;
 
-        // Play Win/Lose Sound
+        // Play Win / Lose Sound
         if (type === 'win') {
             const winSfx = document.getElementById('winSfx');
             if (winSfx) winSfx.play();
@@ -402,20 +657,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const reviewBody = document.getElementById('reviewBody');
         reviewBody.innerHTML = '';
 
-        // Show all questions in the lesson
         questions.forEach((q, idx) => {
-            const result = questionResults.get(idx);
             const row = document.createElement('tr');
             row.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
 
             const word = q.word || q.vocab.split(' ')[0];
-            const pinyin = q.pinyin || q.vocab.split(' ')[1] || '';
-            const meaning = q.meaning || (q.vocab.split(' - ')[1] || '');
+            const pinyin = q.pinyin || '';
+            const meaning = q.meaning || '';
 
             row.innerHTML = `
-                <td style="padding: 10px; text-align: left;">${word}</td>
-                <td style="padding: 10px; text-align: left; opacity: 0.7;">${pinyin}</td>
-                <td style="padding: 10px; text-align: left; font-size: 0.8rem; opacity: 0.7;">${meaning}</td>
+                <td style="padding: 10px; text-align: left; font-weight: bold; color: var(--accent); font-family: var(--font-chinese); font-size: 1.25rem;">${word}</td>
+                <td style="padding: 10px; text-align: left; opacity: 0.85;">${pinyin}</td>
+                <td style="padding: 10px; text-align: left; font-size: 0.85rem; opacity: 0.9;">${meaning}</td>
             `;
             reviewBody.appendChild(row);
         });
@@ -423,31 +676,50 @@ document.addEventListener('DOMContentLoaded', () => {
         resultModal.style.display = 'flex';
     }
 
-    rollBtn.onclick = rollDice;
-    initBoard();
-    // Set initial badge text
-    turnBadge.textContent = `Lượt của TRỘM (1/${MAX_TURNS})`;
-    window.onresize = updatePositions;
+    window.resetGameMatch = function () {
+        // Reset positions & state cleanly so round 2 can be rolled immediately
+        thiefPos = 0;
+        policePos = 34;
+        currentTurn = 'thief';
+        thiefTurnCount = 1;
+        policeTurnCount = 0;
+        gameOver = false;
+        isMoving = false;
+        stepsRemaining = 0;
+        canRoll = true;
 
-    // Music Logic
-    const bgMusic = document.getElementById('bgMusic');
-    const musicIcon = document.getElementById('musicIcon');
-    let isMusicPlaying = false;
+        clearHighlightsAndEndMove();
+        if (resultModal) resultModal.style.display = 'none';
 
-    window.toggleMusic = function () {
-        if (!bgMusic) return;
-        if (isMusicPlaying) {
-            bgMusic.pause();
-            musicIcon.textContent = '🔇';
-        } else {
-            bgMusic.play().catch(e => console.log("Music blocked by browser"));
-            musicIcon.textContent = '🔊';
-        }
-        isMusicPlaying = !isMusicPlaying;
+        updatePositions();
+        updateTurnUI();
+        renderDice(1);
+
+        rollBtn.disabled = false;
+        rollBtn.classList.add('ready-pulse');
+
+        updateStatusBox('Ván mới đã bắt đầu! Bấm "ĐỔ XÚC XẮC" để chơi.');
+    };
+
+    window.openInstructions = function () {
+        const modal = document.getElementById('instructionModal');
+        if (modal) modal.style.display = 'flex';
     };
 
     window.closeInstructions = function () {
         const modal = document.getElementById('instructionModal');
         if (modal) modal.style.display = 'none';
+    };
+
+    // ==========================================
+    // INITIALIZATION
+    // ==========================================
+    rollBtn.onclick = rollDice;
+    initBoard();
+    updateTurnUI();
+    applyZoom();
+
+    window.onresize = () => {
+        updatePositions();
     };
 });
