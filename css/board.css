@@ -54,12 +54,11 @@
     height: 44px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-end;
     z-index: 1500;
     pointer-events: none;
 }
 
-.top-controls-left,
 .top-controls-right {
     display: flex;
     align-items: center;
