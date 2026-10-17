@@ -282,53 +282,107 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // ==========================================
-    // SMART FULLSCREEN / PHÓNG TOÀN MÀN HÌNH
+    // SMART FULLSCREEN & IFRAME HANDLING
     // ==========================================
+    const isInIframe = (function () {
+        try { return window.self !== window.top; } catch (e) { return true; }
+    })();
+
+    // Show 'Tab mới' button if embedded inside an iframe (like LMS or portal)
+    const popoutBtn = document.getElementById('iframePopoutBtn');
+    if (popoutBtn && isInIframe) {
+        popoutBtn.style.display = 'inline-flex';
+    }
+
+    window.openInNewTab = function () {
+        window.open(window.location.href, '_blank');
+    };
+
     let isAppFullscreen = false;
+    let hasEnteredNativeFs = false;
 
     window.toggleSmartFullscreen = function () {
         if (navigator.vibrate) {
             try { navigator.vibrate(30); } catch (e) {}
         }
 
-        if (!isAppFullscreen) {
-            enterFullscreenMode();
-        } else {
+        if (isAppFullscreen) {
             exitFullscreenMode();
+            return;
         }
-    };
 
-    function enterFullscreenMode() {
-        isAppFullscreen = true;
-        document.body.classList.add('app-fullscreen-mode');
-
-        // Request native browser fullscreen if supported (Android, Desktop, iPadOS)
+        // Try native browser fullscreen
         const docEl = document.documentElement;
         const req = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
+
+        // Check if browser/iframe policy explicitly forbids fullscreen
+        const isFsDisallowed = (document.fullscreenEnabled === false);
+
+        if (isInIframe && isFsDisallowed) {
+            window.showToast("🚀 Mở toàn màn hình trong tab mới...");
+            window.open(window.location.href, '_blank');
+            return;
+        }
+
         if (req) {
             try {
                 const p = req.call(docEl);
-                if (p && typeof p.catch === 'function') {
-                    p.catch(err => {
-                        console.log("Native fullscreen fallback to CSS fullscreen:", err);
+                if (p && typeof p.then === 'function') {
+                    p.then(() => {
+                        hasEnteredNativeFs = true;
+                        enterFullscreenMode();
+                    }).catch(err => {
+                        console.warn("Native fullscreen rejected:", err);
+                        if (isInIframe) {
+                            // If inside an LMS iframe that blocked fullscreen, open standalone in new tab
+                            window.showToast("🚀 Mở toàn màn hình trong tab mới...");
+                            window.open(window.location.href, '_blank');
+                        } else {
+                            // On standalone phone/tablet (e.g. iOS), activate CSS App Fullscreen
+                            enterFullscreenMode();
+                        }
                     });
+                    return;
+                } else {
+                    hasEnteredNativeFs = true;
+                    enterFullscreenMode();
+                    return;
                 }
             } catch (err) {
-                console.log("Native fullscreen error handled:", err);
+                console.warn("Native fullscreen exception:", err);
+                if (isInIframe) {
+                    window.showToast("🚀 Mở toàn màn hình trong tab mới...");
+                    window.open(window.location.href, '_blank');
+                    return;
+                }
             }
         }
 
-        // Auto-scale board to maximize visibility across full screen
+        if (isInIframe) {
+            window.showToast("🚀 Mở toàn màn hình trong tab mới...");
+            window.open(window.location.href, '_blank');
+        } else {
+            enterFullscreenMode();
+        }
+    };
+
+    function enterFullscreenMode(notify = true) {
+        isAppFullscreen = true;
+        document.body.classList.add('app-fullscreen-mode');
+
         setTimeout(() => {
             autoFitBoard();
-        }, 120);
+        }, 150);
 
         updateFullscreenUI(true);
-        window.showToast("⛶ Đã bật chế độ Toàn Màn Hình");
+        if (notify) {
+            window.showToast("⛶ Đã bật chế độ Toàn Màn Hình");
+        }
     }
 
-    function exitFullscreenMode() {
+    function exitFullscreenMode(notify = true) {
         isAppFullscreen = false;
+        hasEnteredNativeFs = false;
         document.body.classList.remove('app-fullscreen-mode');
 
         // Exit native fullscreen if active
@@ -342,11 +396,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Restore normal zoom
         window.resetZoom();
-
         updateFullscreenUI(false);
-        window.showToast("🗗 Đã trở về màn hình chuẩn");
+        if (notify) {
+            window.showToast("🗗 Đã trở về màn hình chuẩn");
+        }
     }
 
     function updateFullscreenUI(active) {
@@ -363,8 +417,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function autoFitBoard() {
         if (!boardContainer || !boardGrid) return;
 
-        const containerW = boardContainer.clientWidth - 24;
-        const containerH = boardContainer.clientHeight - 24;
+        const containerW = boardContainer.clientWidth - 20;
+        const containerH = boardContainer.clientHeight - 20;
         const boardW = boardGrid.offsetWidth || 500;
         const boardH = boardGrid.offsetHeight || 500;
 
@@ -379,11 +433,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Native fullscreen change listener (Esc key or browser UI exit)
+    // Native fullscreen change listener (Esc key or tablet gesture exit)
     const onFsChange = () => {
         const isNativeFs = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
-        if (!isNativeFs && isAppFullscreen) {
-            exitFullscreenMode();
+        if (isNativeFs) {
+            hasEnteredNativeFs = true;
+            if (!isAppFullscreen) {
+                enterFullscreenMode(false);
+            }
+        } else if (hasEnteredNativeFs && isAppFullscreen) {
+            hasEnteredNativeFs = false;
+            exitFullscreenMode(false);
         }
     };
     document.addEventListener('fullscreenchange', onFsChange);

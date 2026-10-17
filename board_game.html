@@ -22,6 +22,12 @@
 
         <header class="game-top-controls">
             <div class="top-controls-right">
+                <!-- Open in New Tab Button (Auto-shows when embedded in iframe) -->
+                <button class="control-btn glass" id="iframePopoutBtn" title="Mở toàn màn hình trong tab mới" onclick="openInNewTab()" style="display: none;">
+                    <span>↗</span>
+                    <span class="btn-text-sm">Tab mới</span>
+                </button>
+
                 <!-- Smart Fullscreen Toggle Button -->
                 <button class="control-btn glass" id="fullscreenToggleBtn" title="Mở to toàn màn hình (Phím F)" onclick="toggleSmartFullscreen()">
                     <span id="fullscreenIcon">⛶</span>
