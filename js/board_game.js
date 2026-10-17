@@ -294,8 +294,24 @@ document.addEventListener('DOMContentLoaded', () => {
         popoutBtn.style.display = 'inline-flex';
     }
 
+    function safeOpenTab(url) {
+        try {
+            const win = window.open(url, '_blank');
+            if (win) {
+                window.showToast("🚀 Đang mở trong tab mới...");
+                return true;
+            }
+        } catch (e) {
+            console.warn("Popup blocked or sandbox restriction:", e);
+        }
+        // If popup was blocked or sandbox disallowed popups, fallback to in-frame maximize
+        enterFullscreenMode();
+        window.showToast("⛶ Đã mở rộng trong khung hiển thị");
+        return false;
+    }
+
     window.openInNewTab = function () {
-        window.open(window.location.href, '_blank');
+        safeOpenTab(window.location.href);
     };
 
     let isAppFullscreen = false;
@@ -319,8 +335,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const isFsDisallowed = (document.fullscreenEnabled === false);
 
         if (isInIframe && isFsDisallowed) {
-            window.showToast("🚀 Mở toàn màn hình trong tab mới...");
-            window.open(window.location.href, '_blank');
+            safeOpenTab(window.location.href);
             return;
         }
 
@@ -335,8 +350,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         console.warn("Native fullscreen rejected:", err);
                         if (isInIframe) {
                             // If inside an LMS iframe that blocked fullscreen, open standalone in new tab
-                            window.showToast("🚀 Mở toàn màn hình trong tab mới...");
-                            window.open(window.location.href, '_blank');
+                            safeOpenTab(window.location.href);
                         } else {
                             // On standalone phone/tablet (e.g. iOS), activate CSS App Fullscreen
                             enterFullscreenMode();
@@ -351,16 +365,14 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (err) {
                 console.warn("Native fullscreen exception:", err);
                 if (isInIframe) {
-                    window.showToast("🚀 Mở toàn màn hình trong tab mới...");
-                    window.open(window.location.href, '_blank');
+                    safeOpenTab(window.location.href);
                     return;
                 }
             }
         }
 
         if (isInIframe) {
-            window.showToast("🚀 Mở toàn màn hình trong tab mới...");
-            window.open(window.location.href, '_blank');
+            safeOpenTab(window.location.href);
         } else {
             enterFullscreenMode();
         }
