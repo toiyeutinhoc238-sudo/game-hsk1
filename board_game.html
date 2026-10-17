@@ -37,10 +37,6 @@
                     <button class="zoom-btn" id="zoomResetBtn" title="Khôi phục kích thước chuẩn (100%)" onclick="resetZoom()">↺</button>
                 </div>
 
-                <!-- Fullscreen Toggle Button -->
-                <button class="control-btn glass" id="fullscreenBtn" title="Phóng to toàn màn hình (Phím F)" onclick="toggleFullscreen()">
-                    <span id="fullscreenIcon">⛶</span>
-                </button>
 
                 <!-- Help / Rules Modal Toggle -->
                 <button class="control-btn glass" title="Xem hướng dẫn luật chơi" onclick="openInstructions()">
@@ -59,50 +55,52 @@
                 <div class="turn-badge thief-turn" id="turnBadge">Lượt của TRỘM (1/10)</div>
             </div>
 
-            <div class="dice-section">
-                <div class="dice-container" id="diceContainer" onclick="rollDice()">
-                    <div id="diceFace" class="dice-face">
-                        <!-- Dots will be added here via JS -->
-                    </div>
-                </div>
-                <button class="btn-primary ready-pulse" id="rollBtn">ĐỔ XÚC XẮC</button>
-            </div>
-
-            <div class="status-box glass" id="gameStatusBox">
-                Bấm "ĐỔ XÚC XẮC" để bắt đầu lượt chơi!
-            </div>
-
             <!-- Steps countdown during manual movement -->
             <div id="movingInfoBox" class="moving-info-box glass" style="display: none;">
                 <span id="movingStepsText">Còn 0 bước</span>
                 <button class="btn-finish-steps" id="finishStepsBtn" onclick="finishMoveEarly()">Xong lượt đi</button>
             </div>
 
-            <div class="stats-section">
-                <div class="stat-card glass active-turn" id="thiefStatCard">
-                    <img src="assets/thief.png" alt="Thief" class="stat-avatar">
-                    <div class="stat-info">
-                        <div class="stat-name-row">
-                            <span>Kẻ Trộm</span>
-                            <span id="thiefTileNum" class="tile-tag">Ô 0</span>
+            <div class="sidebar-main-controls">
+                <div class="dice-section">
+                    <div class="dice-container" id="diceContainer" onclick="rollDice()">
+                        <div id="diceFace" class="dice-face">
+                            <!-- Dots will be added here via JS -->
                         </div>
-                        <div class="progress-mini">
-                            <div id="thiefProgress" style="width: 0%"></div>
+                    </div>
+                    <button class="btn-primary ready-pulse" id="rollBtn">ĐỔ XÚC XẮC</button>
+                </div>
+
+                <div class="stats-section">
+                    <div class="stat-card glass active-turn" id="thiefStatCard">
+                        <img src="assets/thief.png" alt="Thief" class="stat-avatar">
+                        <div class="stat-info">
+                            <div class="stat-name-row">
+                                <span>Kẻ Trộm</span>
+                                <span id="thiefTileNum" class="tile-tag">Ô 0</span>
+                            </div>
+                            <div class="progress-mini">
+                                <div id="thiefProgress" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-card glass" id="policeStatCard">
+                        <img src="assets/police.png" alt="Police" class="stat-avatar">
+                        <div class="stat-info">
+                            <div class="stat-name-row">
+                                <span>Cảnh Sát</span>
+                                <span id="policeTileNum" class="tile-tag">Ô 34</span>
+                            </div>
+                            <div class="progress-mini">
+                                <div id="policeProgress" style="width: 0%"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="stat-card glass" id="policeStatCard">
-                    <img src="assets/police.png" alt="Police" class="stat-avatar">
-                    <div class="stat-info">
-                        <div class="stat-name-row">
-                            <span>Cảnh Sát</span>
-                            <span id="policeTileNum" class="tile-tag">Ô 34</span>
-                        </div>
-                        <div class="progress-mini">
-                            <div id="policeProgress" style="width: 0%"></div>
-                        </div>
-                    </div>
-                </div>
+            </div>
+
+            <div class="status-box glass" id="gameStatusBox">
+                Bấm "ĐỔ XÚC XẮC" để bắt đầu lượt chơi!
             </div>
 
             <div class="hint-zoom-info">
@@ -193,7 +191,7 @@
                 <p>5. <b>Luật chơi:</b> Trả lời đúng sẽ được nhấp vào các ô phát sáng để đi tiếp số bước tương ứng. Trả lời sai sẽ bị mất lượt!</p>
                 <p>6. <b>Chiến thắng:</b> Kẻ Trộm thắng nếu về được ô 34. Cảnh Sát thắng nếu đuổi kịp và bắt được Trộm.</p>
                 <p>7. <b>Giới hạn lượt:</b> Mỗi bên có tối đa 10 lượt. Nếu sau 10 lượt Cảnh Sát không bắt được Trộm, Trộm sẽ thắng!</p>
-                <p>8. <b>Chế độ phóng to:</b> Bấm <b>➕/➖</b> hoặc nút <b>⛶ Toàn màn hình</b> trên thanh công cụ để phóng to bàn cờ theo ý muốn.</p>
+                <p>8. <b>Chế độ phóng to:</b> Bấm các nút <b>➕ / ➖</b> trên thanh công cụ để phóng to hoặc thu nhỏ bàn cờ theo ý muốn.</p>
             </div>
             <div style="display: flex; justify-content: center; gap: 1rem;">
                 <button class="btn-primary" onclick="closeInstructions()">Sẵn Sàng Chơi!</button>

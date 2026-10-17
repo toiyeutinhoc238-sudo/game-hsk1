@@ -276,34 +276,9 @@ document.addEventListener('DOMContentLoaded', () => {
             window.changeZoom(-0.1);
         } else if (e.key === '0') {
             window.resetZoom();
-        } else if (e.key === 'f' || e.key === 'F') {
-            window.toggleFullscreen();
         } else if (e.key === ' ' && canRoll && !isMoving && !gameOver && stepsRemaining === 0) {
             e.preventDefault();
             rollDice();
-        }
-    });
-
-    window.toggleFullscreen = function () {
-        if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen().catch(err => {
-                console.warn("Fullscreen error:", err);
-            });
-        } else {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            }
-        }
-    };
-
-    document.addEventListener('fullscreenchange', () => {
-        const isFs = !!document.fullscreenElement;
-        const fsIcon = document.getElementById('fullscreenIcon');
-        if (fsIcon) fsIcon.textContent = isFs ? '🗗' : '⛶';
-        const fsBtn = document.getElementById('fullscreenBtn');
-        if (fsBtn) {
-            fsBtn.classList.toggle('active', isFs);
-            fsBtn.title = isFs ? 'Thoát toàn màn hình (F)' : 'Phóng to toàn màn hình (F)';
         }
     });
 
