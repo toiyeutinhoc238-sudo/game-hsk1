@@ -22,26 +22,6 @@
 
         <header class="game-top-controls">
             <div class="top-controls-right">
-                <!-- Open in New Tab Button (Auto-shows when embedded in iframe) -->
-                <button class="control-btn glass" id="iframePopoutBtn" title="Mở toàn màn hình trong tab mới" onclick="openInNewTab()" style="display: none;">
-                    <span>↗</span>
-                    <span class="btn-text-sm">Tab mới</span>
-                </button>
-
-                <!-- Smart Fullscreen Toggle Button -->
-                <button class="control-btn glass" id="fullscreenToggleBtn" title="Mở to toàn màn hình (Phím F)" onclick="toggleSmartFullscreen()">
-                    <span id="fullscreenIcon">⛶</span>
-                    <span class="btn-text-sm" id="fullscreenText">Toàn màn hình</span>
-                </button>
-
-                <!-- Zoom Controls -->
-                <div class="zoom-controls glass" title="Chế độ phóng to / thu nhỏ bàn cờ">
-                    <button class="zoom-btn" id="zoomOutBtn" title="Thu nhỏ (Ctrl -)" onclick="changeZoom(-0.1)">➖</button>
-                    <span id="zoomLevelDisplay" class="zoom-level">100%</span>
-                    <button class="zoom-btn" id="zoomInBtn" title="Phóng to (Ctrl +)" onclick="changeZoom(0.1)">➕</button>
-                    <button class="zoom-btn" id="zoomResetBtn" title="Khôi phục kích thước chuẩn (100%)" onclick="resetZoom()">↺</button>
-                </div>
-
                 <!-- Help / Rules Modal Toggle -->
                 <button class="control-btn glass" title="Xem hướng dẫn luật chơi" onclick="openInstructions()">
                     ❓
@@ -53,9 +33,6 @@
                 </button>
             </div>
         </header>
-
-        <!-- Floating Toast Notification for Fullscreen / Actions -->
-        <div id="gameToast" class="game-toast"></div>
 
         <aside class="game-sidebar glass">
             <div class="turn-indicator" id="turnIndicator">
@@ -189,19 +166,19 @@
     <!-- Instructions Modal -->
     <div id="instructionModal" class="modal" style="display: flex;">
         <div class="glass modal-content">
-            <h2 style="margin-bottom: 1.2rem; color: var(--secondary);">Hướng Dẫn Cách Chơi</h2>
-            <div style="text-align: left; margin-bottom: 1.5rem; line-height: 1.6; font-size: 0.95rem;">
-                <p>1. Chia làm 2 người hoặc 2 đội chơi: một bên là <b>Kẻ Trộm</b>, một bên là <b>Cảnh Sát</b>.</p>
-                <p>2. Kẻ Trộm bắt đầu từ ô số 0, Cảnh Sát bắt đầu từ ô số 34.</p>
-                <p>3. Hai bên luân phiên nhau đổ xúc xắc để lấy số bước đi.</p>
-                <p>4. <b>Xác nhận di chuyển:</b> Ngay sau khi đổ xúc xắc, bạn phải trả lời đúng một câu hỏi trắc nghiệm mới được phép di chuyển.</p>
-                <p>5. <b>Luật chơi:</b> Trả lời đúng sẽ được nhấp vào các ô phát sáng để đi tiếp số bước tương ứng. Trả lời sai sẽ bị mất lượt!</p>
-                <p>6. <b>Chiến thắng:</b> Kẻ Trộm thắng nếu về được ô 34. Cảnh Sát thắng nếu đuổi kịp và bắt được Trộm.</p>
-                <p>7. <b>Giới hạn lượt:</b> Mỗi bên có tối đa 10 lượt. Nếu sau 10 lượt Cảnh Sát không bắt được Trộm, Trộm sẽ thắng!</p>
-                <p>8. <b>Chế độ toàn màn hình & phóng to:</b> Bấm <b>⛶ Toàn màn hình</b> hoặc <b>➕ / ➖</b> trên thanh công cụ để mở to bàn cờ sắc nét theo ý muốn.</p>
+            <h2 style="margin: 0 0 0.8rem 0; color: var(--secondary); font-size: 1.4rem;">Hướng Dẫn Cách Chơi</h2>
+            <div style="text-align: left; margin-bottom: 1rem; line-height: 1.5; font-size: 0.88rem;">
+                <p style="margin: 4px 0;">1. Chia làm 2 người hoặc 2 đội chơi: một bên là <b>Kẻ Trộm</b>, một bên là <b>Cảnh Sát</b>.</p>
+                <p style="margin: 4px 0;">2. Kẻ Trộm bắt đầu từ ô số 0, Cảnh Sát bắt đầu từ ô số 34.</p>
+                <p style="margin: 4px 0;">3. Hai bên luân phiên nhau đổ xúc xắc để lấy số bước đi.</p>
+                <p style="margin: 4px 0;">4. <b>Xác nhận di chuyển:</b> Ngay sau khi đổ xúc xắc, bạn phải trả lời đúng một câu hỏi trắc nghiệm mới được phép di chuyển.</p>
+                <p style="margin: 4px 0;">5. <b>Luật chơi:</b> Trả lời đúng sẽ được nhấp vào các ô phát sáng để đi tiếp số bước tương ứng. Trả lời sai sẽ bị mất lượt!</p>
+                <p style="margin: 4px 0;">6. <b>Chiến thắng:</b> Kẻ Trộm thắng nếu về được ô 34. Cảnh Sát thắng nếu đuổi kịp và bắt được Trộm.</p>
+                <p style="margin: 4px 0;">7. <b>Giới hạn lượt:</b> Mỗi bên có tối đa 10 lượt. Nếu sau 10 lượt Cảnh Sát không bắt được Trộm, Trộm sẽ thắng!</p>
+                <p style="margin: 4px 0;">8. <b>Tự động tối ưu:</b> Bàn cờ tự động co giãn vừa vặn hoàn hảo với màn hình và khung bài giảng trên LMS, bao phủ trọn vẹn mà không cần cuộn trang.</p>
             </div>
             <div style="display: flex; justify-content: center; gap: 1rem;">
-                <button class="btn-primary" onclick="closeInstructions()">Sẵn Sàng Chơi!</button>
+                <button class="btn-primary" style="padding: 0.65rem 1.8rem;" onclick="closeInstructions()">Sẵn Sàng Chơi!</button>
             </div>
         </div>
     </div>

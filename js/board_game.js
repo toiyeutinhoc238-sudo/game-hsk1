@@ -142,8 +142,15 @@ document.addEventListener('DOMContentLoaded', () => {
             tile.style.gridRow = coord.r + 1;
             tile.style.gridColumn = coord.c + 1;
 
+            let charClass = 'tile-char';
+            if (word.length >= 3) {
+                charClass += ' char-long';
+            } else if (word.length === 2) {
+                charClass += ' char-medium';
+            }
+
             tile.innerHTML = `
-                <div class="tile-char">${word}</div>
+                <div class="${charClass}">${word}</div>
                 <div class="tile-index">${i}</div>
             `;
             boardGrid.appendChild(tile);
@@ -233,249 +240,68 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // ZOOM & FULLSCREEN SYSTEM (Chế độ phóng to)
+    // AUTO-FIT ENGINE (Tự động bao phủ 100%, không cần cuộn)
     // ==========================================
-    window.changeZoom = function (delta) {
-        zoomLevel = Math.round((zoomLevel + delta) * 10) / 10;
-        zoomLevel = Math.min(1.8, Math.max(0.6, zoomLevel));
-        applyZoom();
-    };
+    function fitGameToContainer() {
+        if (!boardContainer || !boardWrapper || !boardGrid) return;
 
-    window.resetZoom = function () {
-        zoomLevel = 1.0;
-        applyZoom();
-    };
+        const containerW = boardContainer.clientWidth;
+        const containerH = boardContainer.clientHeight;
+        const boardW = boardGrid.offsetWidth || 560;
+        const boardH = boardGrid.offsetHeight || 420;
 
-    function applyZoom() {
-        if (boardWrapper) {
-            boardWrapper.style.transform = `scale(${zoomLevel})`;
-        }
-        if (zoomLevelDisplay) {
-            zoomLevelDisplay.textContent = `${Math.round(zoomLevel * 100)}%`;
+        if (containerW > 50 && containerH > 50 && boardW > 50 && boardH > 50) {
+            // Safety margin so board never touches borders or triggers any overflow
+            const padX = 16;
+            const padY = 16;
+            const scaleX = (containerW - padX) / boardW;
+            const scaleY = (containerH - padY) / boardH;
+
+            // Math.min guarantees the board NEVER exceeds container height and NEVER exceeds width
+            let fitScale = Math.min(scaleX, scaleY);
+
+            // Clamp scale between 0.30 and 1.35
+            fitScale = Math.min(1.35, Math.max(0.3, fitScale));
+            fitScale = Math.round(fitScale * 100) / 100;
+
+            boardWrapper.style.transform = `scale(${fitScale})`;
         }
     }
 
-    // Mouse wheel zoom with Ctrl key
-    if (boardContainer) {
-        boardContainer.addEventListener('wheel', (e) => {
-            if (e.ctrlKey || e.metaKey) {
-                e.preventDefault();
-                const delta = e.deltaY < 0 ? 0.1 : -0.1;
-                window.changeZoom(delta);
-            }
-        }, { passive: false });
+    window.fitGameToContainer = fitGameToContainer;
+
+    // Observe size changes of the container (LMS iframe resize, screen rotation, window resize)
+    if (window.ResizeObserver && boardContainer) {
+        const ro = new ResizeObserver(() => {
+            fitGameToContainer();
+        });
+        ro.observe(boardContainer);
+        const layoutEl = document.querySelector('.game-layout');
+        if (layoutEl) ro.observe(layoutEl);
     }
 
-    // ==========================================
-    // TOAST NOTIFICATION
-    // ==========================================
-    let toastTimeout = null;
-    window.showToast = function (message) {
-        const toast = document.getElementById('gameToast');
-        if (!toast) return;
-        toast.textContent = message;
-        toast.classList.add('show');
-        if (toastTimeout) clearTimeout(toastTimeout);
-        toastTimeout = setTimeout(() => {
-            toast.classList.remove('show');
-        }, 2200);
-    };
+    window.addEventListener('resize', () => {
+        fitGameToContainer();
+        updatePositions();
+    });
 
-    // ==========================================
-    // SMART FULLSCREEN & IFRAME HANDLING
-    // ==========================================
-    const isInIframe = (function () {
-        try { return window.self !== window.top; } catch (e) { return true; }
-    })();
-
-    // Show 'Tab mới' button if embedded inside an iframe (like LMS or portal)
-    const popoutBtn = document.getElementById('iframePopoutBtn');
-    if (popoutBtn && isInIframe) {
-        popoutBtn.style.display = 'inline-flex';
-    }
-
-    function safeOpenTab(url) {
-        try {
-            const win = window.open(url, '_blank');
-            if (win) {
-                window.showToast("🚀 Đang mở trong tab mới...");
-                return true;
-            }
-        } catch (e) {
-            console.warn("Popup blocked or sandbox restriction:", e);
-        }
-        // If popup was blocked or sandbox disallowed popups, fallback to in-frame maximize
-        enterFullscreenMode();
-        window.showToast("⛶ Đã mở rộng trong khung hiển thị");
-        return false;
-    }
-
-    window.openInNewTab = function () {
-        safeOpenTab(window.location.href);
-    };
-
-    let isAppFullscreen = false;
-    let hasEnteredNativeFs = false;
-
-    window.toggleSmartFullscreen = function () {
-        if (navigator.vibrate) {
-            try { navigator.vibrate(30); } catch (e) {}
-        }
-
-        if (isAppFullscreen) {
-            exitFullscreenMode();
-            return;
-        }
-
-        // Try native browser fullscreen
-        const docEl = document.documentElement;
-        const req = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
-
-        // Check if browser/iframe policy explicitly forbids fullscreen
-        const isFsDisallowed = (document.fullscreenEnabled === false);
-
-        if (isInIframe && isFsDisallowed) {
-            safeOpenTab(window.location.href);
-            return;
-        }
-
-        if (req) {
-            try {
-                const p = req.call(docEl);
-                if (p && typeof p.then === 'function') {
-                    p.then(() => {
-                        hasEnteredNativeFs = true;
-                        enterFullscreenMode();
-                    }).catch(err => {
-                        console.warn("Native fullscreen rejected:", err);
-                        if (isInIframe) {
-                            // If inside an LMS iframe that blocked fullscreen, open standalone in new tab
-                            safeOpenTab(window.location.href);
-                        } else {
-                            // On standalone phone/tablet (e.g. iOS), activate CSS App Fullscreen
-                            enterFullscreenMode();
-                        }
-                    });
-                    return;
-                } else {
-                    hasEnteredNativeFs = true;
-                    enterFullscreenMode();
-                    return;
-                }
-            } catch (err) {
-                console.warn("Native fullscreen exception:", err);
-                if (isInIframe) {
-                    safeOpenTab(window.location.href);
-                    return;
-                }
-            }
-        }
-
-        if (isInIframe) {
-            safeOpenTab(window.location.href);
-        } else {
-            enterFullscreenMode();
-        }
-    };
-
-    function enterFullscreenMode(notify = true) {
-        isAppFullscreen = true;
-        document.body.classList.add('app-fullscreen-mode');
-
+    window.addEventListener('orientationchange', () => {
         setTimeout(() => {
-            autoFitBoard();
+            fitGameToContainer();
+            updatePositions();
         }, 150);
+    });
 
-        updateFullscreenUI(true);
-        if (notify) {
-            window.showToast("⛶ Đã bật chế độ Toàn Màn Hình");
-        }
-    }
+    // Run multiple times on startup to guarantee fit after fonts/layout settle
+    setTimeout(fitGameToContainer, 50);
+    setTimeout(fitGameToContainer, 200);
+    setTimeout(fitGameToContainer, 600);
 
-    function exitFullscreenMode(notify = true) {
-        isAppFullscreen = false;
-        hasEnteredNativeFs = false;
-        document.body.classList.remove('app-fullscreen-mode');
-
-        // Exit native fullscreen if active
-        if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement) {
-            const exit = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
-            if (exit) {
-                try {
-                    const p = exit.call(document);
-                    if (p && typeof p.catch === 'function') p.catch(() => {});
-                } catch (e) {}
-            }
-        }
-
-        window.resetZoom();
-        updateFullscreenUI(false);
-        if (notify) {
-            window.showToast("🗗 Đã trở về màn hình chuẩn");
-        }
-    }
-
-    function updateFullscreenUI(active) {
-        const fsBtn = document.getElementById('fullscreenToggleBtn');
-        const fsIcon = document.getElementById('fullscreenIcon');
-        const fsText = document.getElementById('fullscreenText');
-
-        if (fsBtn) fsBtn.classList.toggle('active', active);
-        if (fsIcon) fsIcon.textContent = active ? '🗗' : '⛶';
-        if (fsText) fsText.textContent = active ? 'Thu nhỏ' : 'Toàn màn hình';
-        if (fsBtn) fsBtn.title = active ? 'Thu nhỏ lại (Phím F)' : 'Mở to toàn màn hình (Phím F)';
-    }
-
-    function autoFitBoard() {
-        if (!boardContainer || !boardGrid) return;
-
-        const containerW = boardContainer.clientWidth - 20;
-        const containerH = boardContainer.clientHeight - 20;
-        const boardW = boardGrid.offsetWidth || 500;
-        const boardH = boardGrid.offsetHeight || 500;
-
-        if (boardW > 0 && boardH > 0 && containerW > 0 && containerH > 0) {
-            const scaleX = containerW / boardW;
-            const scaleY = containerH / boardH;
-            let optimalScale = Math.min(scaleX, scaleY);
-            // Cap between 0.75 and 1.55
-            optimalScale = Math.min(1.55, Math.max(0.75, optimalScale));
-            zoomLevel = Math.round(optimalScale * 20) / 20;
-            applyZoom();
-        }
-    }
-
-    // Native fullscreen change listener (Esc key or tablet gesture exit)
-    const onFsChange = () => {
-        const isNativeFs = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
-        if (isNativeFs) {
-            hasEnteredNativeFs = true;
-            if (!isAppFullscreen) {
-                enterFullscreenMode(false);
-            }
-        } else if (hasEnteredNativeFs && isAppFullscreen) {
-            hasEnteredNativeFs = false;
-            exitFullscreenMode(false);
-        }
-    };
-    document.addEventListener('fullscreenchange', onFsChange);
-    document.addEventListener('webkitfullscreenchange', onFsChange);
-    document.addEventListener('mozfullscreenchange', onFsChange);
-    document.addEventListener('MSFullscreenChange', onFsChange);
-
-    // Keyboard shortcuts for zoom & fullscreen
+    // Keyboard shortcuts (Space to roll dice)
     document.addEventListener('keydown', (e) => {
         if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
 
-        if (e.key === '+' || e.key === '=') {
-            window.changeZoom(0.1);
-        } else if (e.key === '-' || e.key === '_') {
-            window.changeZoom(-0.1);
-        } else if (e.key === '0') {
-            window.resetZoom();
-        } else if (e.key === 'f' || e.key === 'F') {
-            window.toggleSmartFullscreen();
-        } else if (e.key === ' ' && canRoll && !isMoving && !gameOver && stepsRemaining === 0) {
+        if (e.key === ' ' && canRoll && !isMoving && !gameOver && stepsRemaining === 0) {
             e.preventDefault();
             rollDice();
         }
@@ -891,9 +717,5 @@ document.addEventListener('DOMContentLoaded', () => {
     rollBtn.onclick = rollDice;
     initBoard();
     updateTurnUI();
-    applyZoom();
-
-    window.onresize = () => {
-        updatePositions();
-    };
+    fitGameToContainer();
 });
