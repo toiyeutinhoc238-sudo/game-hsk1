@@ -308,6 +308,291 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ==========================================
+    // MULTI-WINDOW / LMS REAL-TIME STATE SYNC
+    // ==========================================
+    const myWindowId = 'win_' + Math.random().toString(36).substring(2, 9) + '_' + Date.now();
+    const storageKey = `hsk1_game_session_${topicParam || 'default'}`;
+    let lastStateTimestamp = 0;
+    let isApplyingSync = false;
+    let childPopup = null;
+    let broadcastChannel = null;
+
+    if (typeof BroadcastChannel !== 'undefined') {
+        try {
+            broadcastChannel = new BroadcastChannel(`hsk1_sync_${topicParam || 'default'}`);
+            broadcastChannel.onmessage = (event) => {
+                if (event && event.data) {
+                    applySyncedState(event.data, 'broadcast');
+                }
+            };
+        } catch (e) {
+            console.warn("BroadcastChannel error:", e);
+        }
+    }
+
+    // Direct postMessage between opener and popup
+    window.addEventListener('message', (event) => {
+        if (event.data && event.data.type === 'HSK1_SYNC_STATE') {
+            applySyncedState(event.data.state, 'postMessage');
+        }
+    });
+
+    // Storage event (triggers when another window updates localStorage)
+    window.addEventListener('storage', (event) => {
+        if (event.key === storageKey && event.newValue) {
+            try {
+                const parsed = JSON.parse(event.newValue);
+                applySyncedState(parsed, 'storage');
+            } catch (e) {
+                console.warn("Sync parse error:", e);
+            }
+        }
+    });
+
+    // Check localStorage when window gains focus or visibility (e.g. user returns from popup to LMS)
+    function checkStorageSync() {
+        try {
+            const raw = localStorage.getItem(storageKey);
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                if (parsed && parsed.timestamp && parsed.timestamp > lastStateTimestamp) {
+                    applySyncedState(parsed, 'focus');
+                }
+            }
+        } catch (e) {}
+    }
+
+    window.addEventListener('focus', checkStorageSync);
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+            checkStorageSync();
+        }
+    });
+
+    // Save final state before window unload / close
+    window.addEventListener('beforeunload', () => {
+        saveGameState();
+    });
+    window.addEventListener('pagehide', () => {
+        saveGameState();
+    });
+
+    function saveGameState() {
+        if (isApplyingSync) return;
+        lastStateTimestamp = Date.now();
+
+        const isQuestionActive = (questionOverlay && questionOverlay.style.display === 'flex');
+
+        const state = {
+            senderId: myWindowId,
+            topic: topicParam,
+            thiefPos: thiefPos,
+            policePos: policePos,
+            currentTurn: currentTurn,
+            thiefTurnCount: thiefTurnCount,
+            policeTurnCount: policeTurnCount,
+            diceValue: diceValue,
+            stepsRemaining: stepsRemaining,
+            canRoll: canRoll,
+            gameOver: gameOver,
+            gameOverTitle: gameOver && resultTitle ? resultTitle.textContent : '',
+            gameOverMsg: gameOver && resultMessage ? resultMessage.textContent : '',
+            statusMessage: gameStatusBox ? gameStatusBox.textContent : '',
+            questionActive: isQuestionActive,
+            currentQuestionIdx: currentQuestionIdx,
+            questionResults: Array.from(questionResults.entries()),
+            timestamp: lastStateTimestamp
+        };
+
+        try {
+            localStorage.setItem(storageKey, JSON.stringify(state));
+        } catch (e) {
+            console.warn("localStorage write error:", e);
+        }
+
+        if (broadcastChannel) {
+            try {
+                broadcastChannel.postMessage(state);
+            } catch (e) {}
+        }
+
+        if (window.opener && !window.opener.closed) {
+            try {
+                window.opener.postMessage({ type: 'HSK1_SYNC_STATE', state: state }, '*');
+            } catch (e) {}
+        }
+        if (childPopup && !childPopup.closed) {
+            try {
+                childPopup.postMessage({ type: 'HSK1_SYNC_STATE', state: state }, '*');
+            } catch (e) {}
+        }
+    }
+
+    function applySyncedState(newState, source) {
+        if (!newState) return;
+        if (newState.senderId === myWindowId) return; // Ignore own echoes
+        if (newState.topic && topicParam && newState.topic !== topicParam) return;
+
+        if (newState.timestamp && newState.timestamp < lastStateTimestamp) {
+            return; // Discard outdated packets
+        }
+        lastStateTimestamp = newState.timestamp || Date.now();
+        isApplyingSync = true;
+
+        try {
+            thiefPos = typeof newState.thiefPos === 'number' ? newState.thiefPos : thiefPos;
+            policePos = typeof newState.policePos === 'number' ? newState.policePos : policePos;
+            currentTurn = newState.currentTurn || currentTurn;
+            thiefTurnCount = typeof newState.thiefTurnCount === 'number' ? newState.thiefTurnCount : thiefTurnCount;
+            policeTurnCount = typeof newState.policeTurnCount === 'number' ? newState.policeTurnCount : policeTurnCount;
+            diceValue = typeof newState.diceValue === 'number' ? newState.diceValue : diceValue;
+            stepsRemaining = typeof newState.stepsRemaining === 'number' ? newState.stepsRemaining : stepsRemaining;
+            canRoll = typeof newState.canRoll === 'boolean' ? newState.canRoll : canRoll;
+            gameOver = typeof newState.gameOver === 'boolean' ? newState.gameOver : gameOver;
+            isMoving = (stepsRemaining > 0);
+
+            if (Array.isArray(newState.questionResults)) {
+                questionResults = new Map(newState.questionResults);
+            }
+
+            // Sync visual positions & turn badges
+            updatePositions();
+            updateTurnUI();
+            renderDice(diceValue || 1);
+
+            if (newState.statusMessage) {
+                updateStatusBox(newState.statusMessage);
+            }
+
+            // Sync move mode
+            if (stepsRemaining > 0) {
+                if (movingInfoBox) {
+                    movingInfoBox.style.display = 'flex';
+                    if (movingStepsText) movingStepsText.textContent = `Còn ${stepsRemaining} bước đi`;
+                }
+                rollBtn.disabled = true;
+                rollBtn.classList.remove('ready-pulse');
+                highlightPossibleMoves();
+            } else {
+                clearHighlightsAndEndMove();
+                rollBtn.disabled = !canRoll || gameOver;
+                if (canRoll && !gameOver) {
+                    rollBtn.classList.add('ready-pulse');
+                } else {
+                    rollBtn.classList.remove('ready-pulse');
+                }
+            }
+
+            // Sync question overlay
+            if (newState.questionActive && !gameOver) {
+                showSyncedQuestion(newState.currentQuestionIdx);
+            } else {
+                if (questionOverlay) questionOverlay.style.display = 'none';
+                if (timer) clearInterval(timer);
+            }
+
+            // Sync game over modal
+            if (gameOver) {
+                if (resultTitle) resultTitle.textContent = newState.gameOverTitle || 'KẾT THÚC TRÒ CHƠI';
+                if (resultMessage) resultMessage.textContent = newState.gameOverMsg || '';
+                if (resultModal) resultModal.style.display = 'flex';
+            } else {
+                if (resultModal) resultModal.style.display = 'none';
+            }
+
+            // If game is in progress, make sure instructions modal doesn't block the board
+            const isGameStarted = (thiefPos !== 0 || policePos !== 34 || thiefTurnCount > 1 || policeTurnCount > 0 || stepsRemaining > 0 || !canRoll || gameOver);
+            if (isGameStarted) {
+                const instructionModal = document.getElementById('instructionModal');
+                if (instructionModal) instructionModal.style.display = 'none';
+            }
+        } finally {
+            isApplyingSync = false;
+        }
+    }
+
+    function showSyncedQuestion(qIdx) {
+        if (typeof qIdx !== 'number' || !questions[qIdx]) return;
+        currentQuestionIdx = qIdx;
+        const q = questions[currentQuestionIdx];
+
+        if (qText) qText.textContent = q.q;
+        if (qOptions) {
+            qOptions.innerHTML = '';
+            q.a.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = opt.toLowerCase();
+                btn.onclick = () => handleAnswer(idx, q.correct);
+                qOptions.appendChild(btn);
+            });
+        }
+        const tileNameSpan = document.getElementById('tileName');
+        if (tileNameSpan) {
+            tileNameSpan.textContent = `Xác nhận di chuyển (${currentTurn === 'thief' ? 'Kẻ Trộm' : 'Cảnh Sát'})`;
+        }
+
+        if (questionOverlay && questionOverlay.style.display !== 'flex') {
+            questionOverlay.style.display = 'flex';
+            startTimer();
+        }
+    }
+
+    window.openInNewWindow = function () {
+        saveGameState();
+
+        const targetUrl = window.location.href;
+        const width = Math.min(1080, Math.floor(window.screen.availWidth * 0.92));
+        const height = Math.min(740, Math.floor(window.screen.availHeight * 0.9));
+        const left = Math.max(0, Math.floor((window.screen.availWidth - width) / 2));
+        const top = Math.max(0, Math.floor((window.screen.availHeight - height) / 2));
+        const features = `width=${width},height=${height},left=${left},top=${top},menubar=no,toolbar=no,location=no,status=no,resizable=yes,scrollbars=no`;
+
+        try {
+            childPopup = window.open(targetUrl, 'hsk1_game_popup', features);
+            if (!childPopup || childPopup.closed || typeof childPopup.closed === 'undefined') {
+                childPopup = window.open(targetUrl, '_blank');
+            } else {
+                childPopup.focus();
+            }
+        } catch (e) {
+            console.warn("Popup blocked, fallback to tab:", e);
+            childPopup = window.open(targetUrl, '_blank');
+        }
+
+        const resendSync = () => {
+            if (childPopup && !childPopup.closed) {
+                saveGameState();
+            }
+        };
+        setTimeout(resendSync, 200);
+        setTimeout(resendSync, 600);
+        setTimeout(resendSync, 1200);
+    };
+
+    function restoreInitialSession() {
+        try {
+            const raw = localStorage.getItem(storageKey);
+            if (!raw) return;
+            const parsed = JSON.parse(raw);
+            if (!parsed) return;
+
+            if (parsed.topic && topicParam && parsed.topic !== topicParam) return;
+            if (parsed.timestamp && Date.now() - parsed.timestamp > 86400000) return;
+
+            const hasStarted = (parsed.thiefPos !== 0 || parsed.policePos !== 34 || parsed.thiefTurnCount > 1 || parsed.policeTurnCount > 0 || parsed.stepsRemaining > 0 || !parsed.canRoll);
+
+            if (hasStarted && !parsed.gameOver) {
+                applySyncedState(parsed, 'initial_restore');
+                const instructionModal = document.getElementById('instructionModal');
+                if (instructionModal) instructionModal.style.display = 'none';
+            }
+        } catch (e) {
+            console.warn("Session restore error:", e);
+        }
+    }
+
+    // ==========================================
     // VOCABULARY DETAIL MODAL (Phóng to ô từ vựng)
     // ==========================================
     window.showVocabModal = function (index) {
@@ -374,6 +659,7 @@ document.addEventListener('DOMContentLoaded', () => {
         rollBtn.classList.remove('ready-pulse');
 
         updateStatusBox(`${currentTurn === 'thief' ? 'TRỘM' : 'CẢNH SÁT'} đang đổ xúc xắc...`);
+        saveGameState();
 
         // Play dice sound
         const diceSfx = document.getElementById('diceSfx');
@@ -437,6 +723,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         questionOverlay.style.display = 'flex';
         startTimer();
+        saveGameState();
     }
 
     function startTimer() {
@@ -484,6 +771,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 updateStatusBox(`Chính xác! Nhấp vào các ô phát sáng trên bàn cờ để di chuyển (còn ${stepsRemaining} bước).`);
                 highlightPossibleMoves();
+                saveGameState();
             } else {
                 // Wrong answer: Lost turn!
                 stepsRemaining = 0;
@@ -558,6 +846,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (movingStepsText) movingStepsText.textContent = `Còn ${stepsRemaining} bước đi`;
                 updateStatusBox(`Còn ${stepsRemaining} bước! Hãy chọn ô tiếp theo trên bàn cờ.`);
                 highlightPossibleMoves();
+                saveGameState();
             } else {
                 // Finished all steps -> Switch turn smoothly and enable dice for next turn!
                 clearHighlightsAndEndMove();
@@ -605,6 +894,7 @@ document.addEventListener('DOMContentLoaded', () => {
         rollBtn.classList.add('ready-pulse');
 
         updateStatusBox(`Đến lượt của ${currentTurn === 'thief' ? 'KẺ TRỘM' : 'CẢNH SÁT'}! Bấm "ĐỔ XÚC XẮC".`);
+        saveGameState();
     }
 
     function updateTurnUI() {
@@ -674,6 +964,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         resultModal.style.display = 'flex';
+        saveGameState();
     }
 
     window.resetGameMatch = function () {
@@ -699,6 +990,7 @@ document.addEventListener('DOMContentLoaded', () => {
         rollBtn.classList.add('ready-pulse');
 
         updateStatusBox('Ván mới đã bắt đầu! Bấm "ĐỔ XÚC XẮC" để chơi.');
+        saveGameState();
     };
 
     window.openInstructions = function () {
@@ -718,4 +1010,5 @@ document.addEventListener('DOMContentLoaded', () => {
     initBoard();
     updateTurnUI();
     fitGameToContainer();
+    restoreInitialSession();
 });

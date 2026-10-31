@@ -103,6 +103,31 @@ html, body {
     transform: scale(0.95);
 }
 
+.btn-text-sm {
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+#openNewWindowBtn {
+    border-color: rgba(14, 165, 233, 0.4);
+    background: rgba(14, 165, 233, 0.18);
+    color: #e0f2fe;
+}
+
+#openNewWindowBtn:hover {
+    background: rgba(14, 165, 233, 0.35);
+    border-color: #38bdf8;
+    color: #fff;
+    box-shadow: 0 0 14px rgba(14, 165, 233, 0.45);
+}
+
+@media (max-width: 650px) {
+    .btn-text-sm {
+        display: none;
+    }
+}
+
 /* ========================================================
    SIDEBAR (Desktop / Default)
    ======================================================== */
