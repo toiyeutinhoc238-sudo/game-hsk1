@@ -7,9 +7,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HSK 1 - TRUY ĐUỔI KẺ TRỘM</title>
     <link rel="stylesheet" href="css/style.css">
+    <script src="js/lms-adapter.js"></script>
 </head>
 
 <body>
+    <!-- Top Controls (Popout Window) -->
+    <div class="top-controls" style="position: fixed; top: 12px; right: 12px; z-index: 100;">
+        <button id="openNewWindowBtn" class="control-btn glass" title="Mở ở cửa sổ mới (Toàn màn hình LMS)" onclick="openHomeInNewWindow(event)" style="height: 34px; padding: 0 12px; border-radius: 999px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; color: #fff; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.2); backdrop-filter: blur(12px); box-shadow: 0 4px 12px rgba(0,0,0,0.35); transition: all 0.2s ease;">
+            <svg id="popoutIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="pointer-events: none;">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <line x1="10" y1="14" x2="21" y2="3"></line>
+            </svg>
+            <span id="popoutText" style="font-size: 0.82rem; font-weight: 600;">Cửa sổ mới</span>
+        </button>
+    </div>
+
+    <!-- LMS Toast Notification -->
+    <div id="lms-toast" class="lms-toast"></div>
+
     <div class="bg-dots" id="bgDots"></div>
     <div class="container">
         <header>
@@ -87,9 +103,49 @@
             else if (topic.includes('(Phần 2)')) topicId += '_phan2';
             else if (topic.includes('(Phần 3)')) topicId += '_phan3';
 
-            card.onclick = () => window.location.href = `board_game.html?topic=${topicId}`;
+            card.onclick = () => {
+                const targetUrl = `board_game.html?topic=${topicId}${isChildWindow ? '&popout=1' : ''}`;
+                window.location.href = targetUrl;
+            };
             grid.appendChild(card);
         });
+
+        // Detect child popup window
+        const params = new URLSearchParams(window.location.search);
+        const isChildWindow = Boolean(params.get('popout') === '1' || params.get('mode') === 'popup' || (window.opener && window.opener !== window));
+        if (isChildWindow) {
+            document.body.classList.add('is-child-window');
+            const popoutBtn = document.getElementById('openNewWindowBtn');
+            const popoutText = document.getElementById('popoutText');
+            const popoutIcon = document.getElementById('popoutIcon');
+            if (popoutBtn) {
+                popoutBtn.title = "Quay về màn hình LMS (Đóng cửa sổ này)";
+                popoutBtn.style.background = 'rgba(239, 68, 68, 0.25)';
+                popoutBtn.style.borderColor = 'rgba(239, 68, 68, 0.5)';
+                popoutBtn.style.color = '#fca5a5';
+            }
+            if (popoutText) popoutText.textContent = "Về LMS";
+            if (popoutIcon) {
+                popoutIcon.innerHTML = `
+                    <polyline points="9 14 4 9 9 4"></polyline>
+                    <path d="M20 20v-7a4 4 0 0 0-4-4H4"></path>
+                `;
+            }
+        }
+
+        window.openHomeInNewWindow = function (e) {
+            if (e && e.preventDefault) e.preventDefault();
+            if (isChildWindow) {
+                if (window.opener && !window.opener.closed) {
+                    try { window.opener.focus(); } catch (err) {}
+                }
+                window.close();
+                return;
+            }
+            if (window.LMSAdapter && typeof window.LMSAdapter.openNewTab === 'function') {
+                window.LMSAdapter.openNewTab();
+            }
+        };
 
         // Generate background dots
         const bgDots = document.getElementById('bgDots');
