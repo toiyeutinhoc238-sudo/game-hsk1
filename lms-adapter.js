@@ -214,11 +214,15 @@
                 } else if (action === 'RESTART' || action === 'HSK1_RESTART') {
                     window.location.reload();
                 } else if (action === 'MUTE' || action === 'HSK1_MUTE') {
-                    if (typeof window.toggleMusic === 'function' && window.isMusicPlaying) {
+                    if (typeof window.applyMuteState === 'function') {
+                        window.applyMuteState(true);
+                    } else if (typeof window.toggleMusic === 'function' && window.isMusicPlaying) {
                         window.toggleMusic();
                     }
                 } else if (action === 'UNMUTE' || action === 'HSK1_UNMUTE') {
-                    if (typeof window.toggleMusic === 'function' && !window.isMusicPlaying) {
+                    if (typeof window.applyMuteState === 'function') {
+                        window.applyMuteState(false);
+                    } else if (typeof window.toggleMusic === 'function' && !window.isMusicPlaying) {
                         window.toggleMusic();
                     }
                 } else if (action === 'HSK1_LMS_PROGRESS' && data.payload && this.isSCORM) {
@@ -560,3 +564,4 @@
     window.LMSBridge = LMSAdapter;
 
 })(window);
+
