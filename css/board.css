@@ -717,17 +717,28 @@ body.is-child-window #openNewWindowBtn:hover, body.is-child-window #popout-btn:h
 
 .option-btn.correct {
     background: var(--success) !important;
-    border-color: var(--success) !important;
+    background: linear-gradient(135deg, #22c55e, #16a34a) !important;
+    border-color: #86efac !important;
     color: #000 !important;
     font-weight: 800 !important;
-    box-shadow: 0 0 20px rgba(34, 197, 94, 0.6);
+    box-shadow: 0 0 25px rgba(34, 197, 94, 0.7), inset 0 0 10px rgba(255, 255, 255, 0.3) !important;
 }
 
-.option-btn.wrong {
+.option-btn.wrong,
+.option-btn.incorrect {
     background: var(--error) !important;
-    border-color: var(--error) !important;
+    background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+    border-color: #fca5a5 !important;
     color: #fff !important;
-    box-shadow: 0 0 20px rgba(239, 68, 68, 0.6);
+    font-weight: 800 !important;
+    box-shadow: 0 0 25px rgba(239, 68, 68, 0.8), inset 0 0 10px rgba(0, 0, 0, 0.2) !important;
+    animation: shakeError 0.4s ease-in-out;
+}
+
+@keyframes shakeError {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-6px); }
+    40%, 80% { transform: translateX(6px); }
 }
 
 /* ========================================================

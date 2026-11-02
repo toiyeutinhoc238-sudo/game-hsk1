@@ -731,12 +731,34 @@ document.addEventListener('DOMContentLoaded', () => {
             const btns = qOptions.querySelectorAll('.option-btn');
             btns.forEach((btn, idx) => {
                 btn.disabled = true;
-                if (idx === correct) btn.classList.add('correct');
-                if (idx === selected && selected !== correct) btn.classList.add('incorrect');
+                if (idx === correct) {
+                    btn.classList.add('correct');
+                    btn.style.setProperty('background', '#22c55e', 'important');
+                    btn.style.setProperty('border-color', '#16a34a', 'important');
+                    btn.style.setProperty('color', '#000000', 'important');
+                    btn.style.setProperty('font-weight', '800', 'important');
+                    btn.style.setProperty('box-shadow', '0 0 20px rgba(34, 197, 94, 0.8)', 'important');
+                }
+                if (idx === selected && selected !== correct) {
+                    btn.classList.add('wrong');
+                    btn.classList.add('incorrect');
+                    btn.style.setProperty('background', '#ef4444', 'important');
+                    btn.style.setProperty('border-color', '#dc2626', 'important');
+                    btn.style.setProperty('color', '#ffffff', 'important');
+                    btn.style.setProperty('font-weight', '800', 'important');
+                    btn.style.setProperty('box-shadow', '0 0 20px rgba(239, 68, 68, 0.8)', 'important');
+                }
             });
         }
 
         const isCorrect = (selected === correct);
+
+        // Sound effect for answer feedback
+        if (!isMuted && window.LMSAdapter && typeof window.LMSAdapter.playSynthesizedSound === 'function') {
+            try {
+                window.LMSAdapter.playSynthesizedSound(isCorrect ? 'correct' : 'wrong');
+            } catch (e) {}
+        }
 
         setTimeout(() => {
             if (questionOverlay) questionOverlay.style.display = 'none';

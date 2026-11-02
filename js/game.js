@@ -153,8 +153,17 @@ document.addEventListener('DOMContentLoaded', () => {
         buttons.forEach((btn, idx) => {
             if (idx === q.correct) {
                 btn.classList.add('correct');
+                btn.style.setProperty('background', '#22c55e', 'important');
+                btn.style.setProperty('border-color', '#16a34a', 'important');
+                btn.style.setProperty('color', '#000000', 'important');
+                btn.style.setProperty('font-weight', '800', 'important');
             } else if (idx === playerChoice) {
-                btn.classList.add('wrong');
+                btn.classList.add('wrong', 'incorrect');
+                btn.style.setProperty('background', '#ef4444', 'important');
+                btn.style.setProperty('border-color', '#dc2626', 'important');
+                btn.style.setProperty('color', '#ffffff', 'important');
+                btn.style.setProperty('font-weight', '800', 'important');
+                btn.style.setProperty('box-shadow', '0 0 20px rgba(239, 68, 68, 0.8)', 'important');
             }
         });
 
