@@ -104,6 +104,11 @@
             else if (topic.includes('(Phần 3)')) topicId += '_phan3';
 
             card.onclick = () => {
+                try {
+                    localStorage.removeItem('hsk1_synced_state');
+                    localStorage.removeItem('hsk1_game_sync_state');
+                    localStorage.removeItem('hsk1_active_session');
+                } catch (e) {}
                 const targetUrl = `board_game.html?topic=${topicId}${isChildWindow ? '&popout=1' : ''}`;
                 window.location.href = targetUrl;
             };

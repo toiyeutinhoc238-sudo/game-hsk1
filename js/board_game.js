@@ -238,13 +238,16 @@ function getInitialStateForChild() {
         } catch (e) {}
     }
 
-    // 5. Try storage
+    // 5. Try storage as last fallback (only if matching current topic)
     try {
         const raw = storage.getItem('hsk1_synced_state') || storage.getItem('hsk1_game_sync_state');
         if (raw) {
             const parsed = JSON.parse(raw);
+            const currentTopicParam = urlParams.get('topic');
             if (parsed && (Date.now() - parsed.timestamp < 7200000)) {
-                return parsed;
+                if (!currentTopicParam || !parsed.topicParam || parsed.topicParam === currentTopicParam) {
+                    return parsed;
+                }
             }
         }
     } catch (e) {}
@@ -257,23 +260,12 @@ function determineInitialTopic() {
     let t = params.get('topic');
     if (t) return t;
 
-    // Try hash #state=
+    // Try hash #state= (for popup window)
     try {
         if (window.location.hash && window.location.hash.startsWith('#state=')) {
             const decoded = decodeStateFromUrlParam(window.location.hash.substring(7));
             if (decoded && (decoded.topicParam || decoded.topicName)) {
                 return decoded.topicParam || decoded.topicName;
-            }
-        }
-    } catch (e) {}
-
-    // Try storage
-    try {
-        const raw = storage.getItem('hsk1_synced_state') || storage.getItem('hsk1_game_sync_state');
-        if (raw) {
-            const parsed = JSON.parse(raw);
-            if (parsed && (parsed.topicParam || parsed.topicName)) {
-                return parsed.topicParam || parsed.topicName;
             }
         }
     } catch (e) {}
@@ -991,8 +983,33 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         updateStatusBox('Ván mới đã bắt đầu! Bấm "ĐỔ XÚC XẮC" để chơi.');
+        try {
+            storage.removeItem('hsk1_synced_state');
+            storage.removeItem('hsk1_game_sync_state');
+            storage.removeItem('hsk1_active_session');
+        } catch (e) {}
         broadcastGameState();
     };
+
+    function restartGame() {
+        try {
+            storage.removeItem('hsk1_synced_state');
+            storage.removeItem('hsk1_game_sync_state');
+            storage.removeItem('hsk1_active_session');
+        } catch (e) {}
+        const targetUrl = new URL(window.location.href);
+        targetUrl.searchParams.delete('state');
+        targetUrl.hash = '';
+        if (isChildWindow) {
+            targetUrl.searchParams.set('popout', '1');
+        } else {
+            targetUrl.searchParams.delete('popout');
+            targetUrl.searchParams.delete('mode');
+            targetUrl.searchParams.delete('session');
+        }
+        window.location.href = targetUrl.toString();
+    }
+    window.restartGame = restartGame;
 
     window.openInstructions = function () {
         const modal = document.getElementById('instructionModal');
@@ -1983,20 +2000,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }, 600);
 
-            // Restore recent match in LMS window if game was in progress
+            // Parent LMS window: Fresh game entry! Clean up any old stale sync state from previously closed sessions
             try {
-                const raw = storage.getItem('hsk1_synced_state');
-                if (raw) {
-                    const parsed = JSON.parse(raw);
-                    if (parsed && (Date.now() - parsed.timestamp < 86400000)) {
-                        const hasStarted = (parsed.thiefPos !== 0 || parsed.policePos !== 34 || parsed.thiefTurnCount > 1 || parsed.policeTurnCount > 0 || parsed.stepsRemaining > 0 || !parsed.canRoll);
-                        if (hasStarted && !parsed.gameOver) {
-                            importGameState(parsed, false);
-                            const instructionModal = document.getElementById('instructionModal');
-                            if (instructionModal) instructionModal.style.setProperty('display', 'none', 'important');
-                        }
-                    }
-                }
+                storage.removeItem('hsk1_synced_state');
+                storage.removeItem('hsk1_game_sync_state');
+                storage.removeItem('hsk1_active_session');
             } catch (e) {}
         }
     }
