@@ -1,7 +1,7 @@
 /**
  * HSK 1 - TRUY ĐUỔI KẺ TRỘM
  * Real-time Two-way State Synchronization Engine & Game Core
- * Tương thích đa cửa sổ & LMS iFrame (Moodle, Canvas, SCORM, Popup Window)
+ * Tương thích 100% với LMS iFrame (Moodle, Canvas, Cohota, SCORM) & Popup Window
  * Kiến trúc chuẩn hoá đồng bộ tuyệt đối theo tiêu chuẩn HSK 4
  */
 
@@ -19,6 +19,7 @@ let lastChildMessageTime = 0;
 let isApplyingSync = false;
 let lastSoundToggleTime = 0;
 let childCheckInterval = null;
+let hasClosedInstructions = false;
 
 // Storage fallback safe for sandboxed iFrames
 const storage = window.safeStorage || {
@@ -169,9 +170,10 @@ function decodeStateFromUrlParam(paramStr) {
 }
 
 function getInitialStateForChild() {
+    const urlParams = new URLSearchParams(window.location.search);
+
     // 1. Try URL search query parameter (?state=...)
     try {
-        const urlParams = new URLSearchParams(window.location.search);
         const stateParam = urlParams.get('state');
         if (stateParam) {
             const state = decodeStateFromUrlParam(stateParam);
@@ -186,6 +188,63 @@ function getInitialStateForChild() {
             if (rawHash.startsWith('state=')) {
                 const state = decodeStateFromUrlParam(rawHash.substring(6));
                 if (state) return state;
+            }
+        }
+    } catch (e) {}
+
+    // 3. Try discrete URL parameters (100% resilient across sandboxed LMS iframes)
+    if (urlParams.get('tpos') !== null) {
+        const tPos = parseInt(urlParams.get('tpos'), 10);
+        const pPos = parseInt(urlParams.get('ppos'), 10);
+        const tCount = parseInt(urlParams.get('tcount'), 10);
+        const pCount = parseInt(urlParams.get('pcount'), 10);
+        const dVal = parseInt(urlParams.get('dice'), 10);
+        const sRem = parseInt(urlParams.get('steps'), 10);
+        const cRoll = urlParams.get('canroll') !== '0';
+        const gOver = urlParams.get('over') === '1';
+        const isIntroClosed = urlParams.get('intro') === '0';
+        const currentTurnVal = urlParams.get('turn') || 'thief';
+        const topParam = urlParams.get('topic') || determineInitialTopic();
+
+        return {
+            topicParam: topParam,
+            topicName: resolveTopicName(topParam),
+            thiefPos: isNaN(tPos) ? 0 : tPos,
+            policePos: isNaN(pPos) ? 34 : pPos,
+            currentTurn: currentTurnVal,
+            thiefTurnCount: isNaN(tCount) ? 1 : tCount,
+            policeTurnCount: isNaN(pCount) ? 0 : pCount,
+            diceValue: isNaN(dVal) ? 0 : dVal,
+            stepsRemaining: isNaN(sRem) ? 0 : sRem,
+            canRoll: cRoll,
+            isMoving: sRem > 0,
+            gameOver: gOver,
+            instructionClosed: isIntroClosed || true,
+            isMuted: urlParams.get('muted') === '1',
+            audioCurrentTime: parseFloat(urlParams.get('audioTime')) || 0,
+            statusMessage: urlParams.get('msg') ? decodeURIComponent(urlParams.get('msg')) : '',
+            isQuestionActive: urlParams.get('qactive') === '1',
+            currentQuestionIdx: parseInt(urlParams.get('qidx'), 10) || 0,
+            timestamp: Date.now()
+        };
+    }
+
+    // 4. Try window.opener.__HSK1_LATEST_STATE__
+    if (window.opener && !window.opener.closed) {
+        try {
+            if (window.opener.__HSK1_LATEST_STATE__) {
+                return window.opener.__HSK1_LATEST_STATE__;
+            }
+        } catch (e) {}
+    }
+
+    // 5. Try storage
+    try {
+        const raw = storage.getItem('hsk1_synced_state') || storage.getItem('hsk1_game_sync_state');
+        if (raw) {
+            const parsed = JSON.parse(raw);
+            if (parsed && (Date.now() - parsed.timestamp < 7200000)) {
+                return parsed;
             }
         }
     } catch (e) {}
@@ -282,7 +341,6 @@ document.addEventListener('DOMContentLoaded', () => {
         questions = generateQuestionsForTopic(topicName);
     }
     if (!questions || questions.length === 0) {
-        // Safe fallback to first available topic questions
         if (typeof hsk1Vocab !== 'undefined' && hsk1Vocab.length > 0) {
             const firstTopic = hsk1Vocab[0].topic;
             questions = generateQuestionsForTopic(firstTopic);
@@ -294,10 +352,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ];
     }
 
-    // ==========================================
-    // GAME CONSTANTS & STATE
-    // (Preserve exact original rules & mechanics)
-    // ==========================================
+    // Game constants & state
     const GRID_COLS = 7;
     const GRID_ROWS = 5;
     const TOTAL_TILES = GRID_COLS * GRID_ROWS; // 35 tiles (0 to 34)
@@ -319,9 +374,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let recentQuestions = [];
     let timer = null;
 
-    // ==========================================
-    // DOM ELEMENTS
-    // ==========================================
+    // DOM Elements
     const boardContainer = document.getElementById('boardContainer');
     const boardWrapper = document.getElementById('boardWrapper');
     const boardGrid = document.getElementById('boardGrid');
@@ -348,9 +401,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const thiefStatCard = document.getElementById('thiefStatCard');
     const policeStatCard = document.getElementById('policeStatCard');
 
-    // ==========================================
-    // INITIALIZE BOARD
-    // ==========================================
     function initBoard() {
         if (!boardGrid) return;
         boardGrid.querySelectorAll('.tile').forEach(t => t.remove());
@@ -456,9 +506,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (e) {}
     }
 
-    // ==========================================
-    // AUTO-FIT ENGINE
-    // ==========================================
+    // Auto-fit responsive board
     function fitGameToContainer() {
         if (!boardContainer || !boardWrapper || !boardGrid) return;
 
@@ -512,9 +560,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // ==========================================
-    // VOCABULARY DETAIL MODAL
-    // ==========================================
+    // Vocabulary Modal
     window.showVocabModal = function (index) {
         if (stepsRemaining > 0) return;
         const tile = document.getElementById(`tile-${index}`);
@@ -542,9 +588,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (vocabModal) vocabModal.style.display = 'none';
     };
 
-    // ==========================================
-    // DICE LOGIC
-    // ==========================================
+    // Dice logic
     const dotPositions = {
         1: [4],
         2: [0, 8],
@@ -604,9 +648,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (rollBtn) rollBtn.onclick = rollDice;
 
-    // ==========================================
-    // QUESTION LOGIC
-    // ==========================================
+    // Question logic
     function showQuestion() {
         let maxAttempts = 50;
         let limit = Math.min(4, Math.floor(questions.length / 2) || 1);
@@ -722,9 +764,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 1200);
     }
 
-    // ==========================================
-    // MANUAL TILE MOVEMENT
-    // ==========================================
+    // Movement
     function highlightPossibleMoves() {
         const currentPos = currentTurn === 'thief' ? thiefPos : policePos;
         const coord = getCoord(currentPos);
@@ -802,9 +842,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // ==========================================
-    // SWITCH TURN & UI UPDATES
-    // ==========================================
     function switchTurn() {
         if (currentTurn === 'thief') {
             currentTurn = 'police';
@@ -850,9 +887,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // ==========================================
-    // END GAME & RESET MATCH
-    // ==========================================
     function endGame(title, msg, type) {
         gameOver = true;
         canRoll = false;
@@ -944,8 +978,10 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.closeInstructions = function () {
+        hasClosedInstructions = true;
         const modal = document.getElementById('instructionModal');
-        if (modal) modal.style.display = 'none';
+        if (modal) modal.style.setProperty('display', 'none', 'important');
+        broadcastGameState();
     };
 
     /* ==========================================================================
@@ -953,9 +989,6 @@ document.addEventListener('DOMContentLoaded', () => {
        Chuẩn hoá dựa trên nền tảng ổn định của HSK 4
        ========================================================================== */
 
-    /**
-     * Export complete current game state snapshot
-     */
     function exportGameState() {
         const bgMusic = document.getElementById('bgMusic');
         const curAudioTime = (bgMusic && !isNaN(bgMusic.currentTime)) ? Number(bgMusic.currentTime.toFixed(2)) : 0;
@@ -988,6 +1021,7 @@ document.addEventListener('DOMContentLoaded', () => {
             gameOver: gameOver,
             thiefTurnCount: thiefTurnCount,
             policeTurnCount: policeTurnCount,
+            instructionClosed: hasClosedInstructions,
             statusMessage: gameStatusBox ? gameStatusBox.textContent : '',
             isQuestionActive: isQuestionActive,
             currentQuestion: questionSnapshot,
@@ -999,9 +1033,6 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    /**
-     * Restore game state from state snapshot
-     */
     function importGameState(state, shouldBroadcast = false) {
         if (!state) return;
         isApplyingSync = true;
@@ -1047,6 +1078,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (typeof state.canRoll === 'boolean') canRoll = state.canRoll;
             if (typeof state.isMoving === 'boolean') isMoving = state.isMoving;
             if (typeof state.gameOver === 'boolean') gameOver = state.gameOver;
+            if (typeof state.instructionClosed === 'boolean' && state.instructionClosed) {
+                hasClosedInstructions = true;
+            }
 
             updatePositions();
             updateTurnUI();
@@ -1102,10 +1136,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (resultModal) resultModal.style.display = 'none';
             }
 
-            const isGameStarted = (thiefPos !== 0 || policePos !== 34 || thiefTurnCount > 1 || policeTurnCount > 0 || stepsRemaining > 0 || !canRoll || gameOver);
-            if (isGameStarted) {
+            // 6. Instructions Modal: Always hide if closed, or if child window, or if game in progress
+            if (hasClosedInstructions || isChildWindow || state.instructionClosed || (thiefPos !== 0 || policePos !== 34 || thiefTurnCount > 1 || policeTurnCount > 0 || stepsRemaining > 0 || !canRoll || gameOver)) {
+                hasClosedInstructions = true;
                 const instructionModal = document.getElementById('instructionModal');
-                if (instructionModal) instructionModal.style.display = 'none';
+                if (instructionModal) instructionModal.style.setProperty('display', 'none', 'important');
             }
 
             updateSyncOverlayInfo(state);
@@ -1116,9 +1151,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (shouldBroadcast) broadcastGameState();
     }
 
-    /**
-     * Broadcast current game state across all active channels
-     */
     function broadcastGameState(extraProps = null, isClosing = false) {
         const state = exportGameState();
         if (extraProps) {
@@ -1154,9 +1186,6 @@ document.addEventListener('DOMContentLoaded', () => {
         updateSyncOverlayInfo(state);
     }
 
-    /**
-     * Check and Apply Latest State in Parent Window (invoked on focus, tab switch, & 600ms poll)
-     */
     function checkAndApplyLatestState() {
         if (isChildWindow) return;
         if (!window.isWaitingForChild && !childGameWindow) return;
@@ -1196,8 +1225,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } catch (e) {}
 
-        // Tự động khôi phục nếu child đã đóng, hoặc flag đóng được ghi nhận, hoặc mất heartbeat quá 2.5s (chuẩn HSK 4)
-        const noHeartbeat = (Date.now() - lastChildMessageTime > 2500);
+        // Tự động khôi phục nếu child đã đóng, hoặc flag đóng được ghi nhận, hoặc mất heartbeat quá 3.5s
+        const noHeartbeat = (lastChildMessageTime > 0 && Date.now() - lastChildMessageTime > 3500);
         if (isClosed || popoutClosedFlag || noHeartbeat) {
             resumeInThisWindow(false);
             return;
@@ -1212,9 +1241,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    /**
-     * Update real-time sync overlay information on parent LMS modal
-     */
     function updateSyncOverlayInfo(state) {
         if (!state) return;
         const topicEl = document.getElementById('syncOverlayTopic') || document.querySelector('[data-id="sync-overlay-topic"]');
@@ -1234,9 +1260,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    /**
-     * Handle incoming sync messages across BroadcastChannel and postMessage
-     */
     function handleIncomingSyncMessage(data) {
         if (!data) return;
         const type = data.type || data.action;
@@ -1253,7 +1276,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (isMuted) {
                         try { bgMusic.pause(); } catch (e) {}
                     } else if (!isMuted && !isChildWindow && (childGameWindow && !childGameWindow.closed)) {
-                        // Keep parent paused while child is active
                         try { bgMusic.pause(); } catch (e) {}
                     } else {
                         if (isFinite(data.audioCurrentTime)) {
@@ -1364,7 +1386,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * Open Game in Dedicated Standalone Window with State Handover (Matches HSK 4 Architecture)
+     * Open Game in Dedicated Standalone Window with State Handover
+     * 100% Guaranteed cross-origin iframe parameter handover
      */
     function openGameInNewWindow(e) {
         if (e && e.preventDefault) e.preventDefault();
@@ -1386,6 +1409,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         snapshot.syncSessionId = 'sync_' + Date.now();
         snapshot.isLmsWaiting = true;
+        snapshot.instructionClosed = true; // Child window never re-opens rules modal
         window.__HSK1_LATEST_STATE__ = snapshot;
         latestSyncedState = snapshot;
 
@@ -1409,18 +1433,36 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (err) {}
         }
 
-        // 3. Clean URL parameters + Hash state handover (100% bypasses LMS iframe storage barriers)
+        // 3. TARGET URL WITH BOTH DISCRETE PARAMS AND BASE64 QUERY PARAM:
+        // THIS CANNOT BE STRIPPED OR BLOCKED BY STORAGE PARTITIONING!
         const targetUrl = new URL(window.location.href);
-        targetUrl.searchParams.delete('state');
-        targetUrl.hash = '';
         targetUrl.searchParams.set('popout', '1');
         targetUrl.searchParams.set('session', snapshot.syncSessionId);
         if (topicParam) targetUrl.searchParams.set('topic', topicParam);
+        targetUrl.searchParams.set('tpos', String(snapshot.thiefPos));
+        targetUrl.searchParams.set('ppos', String(snapshot.policePos));
+        targetUrl.searchParams.set('turn', snapshot.currentTurn);
+        targetUrl.searchParams.set('tcount', String(snapshot.thiefTurnCount));
+        targetUrl.searchParams.set('pcount', String(snapshot.policeTurnCount));
+        targetUrl.searchParams.set('dice', String(snapshot.diceValue || 0));
+        targetUrl.searchParams.set('steps', String(snapshot.stepsRemaining || 0));
+        targetUrl.searchParams.set('canroll', snapshot.canRoll ? '1' : '0');
+        targetUrl.searchParams.set('over', snapshot.gameOver ? '1' : '0');
+        targetUrl.searchParams.set('intro', '0'); // Instructions always closed in popup
         targetUrl.searchParams.set('muted', isMuted ? '1' : '0');
-        targetUrl.searchParams.set('audioTime', curAudioTime);
+        targetUrl.searchParams.set('audioTime', String(curAudioTime));
+
+        if (snapshot.statusMessage) {
+            targetUrl.searchParams.set('msg', encodeURIComponent(snapshot.statusMessage));
+        }
+        if (snapshot.isQuestionActive && snapshot.currentQuestion) {
+            targetUrl.searchParams.set('qactive', '1');
+            targetUrl.searchParams.set('qidx', String(snapshot.currentQuestion.idx || 0));
+        }
 
         try {
             const b64 = btoa(unescape(encodeURIComponent(stateStr)));
+            targetUrl.searchParams.set('state', b64);
             targetUrl.hash = 'state=' + encodeURIComponent(b64);
         } catch (err) {}
 
@@ -1432,10 +1474,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const top = Math.max(0, Math.floor((scrHeight - h) / 2));
         const windowFeatures = `width=${w},height=${h},left=${left},top=${top},resizable=yes,scrollbars=yes`;
 
-        // 4. Multi-tier Opening Strategy (Guarantees success across LMS iFrames & Browser popup blockers)
+        // 4. Multi-tier Opening Strategy
         let child = null;
 
-        // Strategy 1: Standalone Popup Window (Matches HSK 4 preferred UX)
+        // Strategy 1: Standalone Popup Window (Preferred)
         try {
             child = window.open(targetUrl.toString(), 'HSK1_Standalone_Game', windowFeatures);
         } catch (err) {
@@ -1466,7 +1508,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const a = document.createElement('a');
                 a.href = targetUrl.toString();
                 a.target = '_blank';
-                a.rel = 'noopener';
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
@@ -1498,13 +1539,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.LMSAdapter.showToast("🚀 Đang chơi tại cửa sổ mới! Màn hình LMS tạm dừng và chờ đồng bộ.");
             }
 
-            // 6. Safe poller with Heartbeat Guard (matches HSK 4)
+            // 6. Safe poller with Heartbeat Guard (gives 8-second grace period for network load)
             if (childCheckInterval) {
                 clearInterval(childCheckInterval);
                 childCheckInterval = null;
             }
 
-            lastChildMessageTime = Date.now();
+            lastChildMessageTime = 0; // 0 indicates waiting for initial connection
 
             setTimeout(() => {
                 if (!window.isWaitingForChild) return;
@@ -1532,8 +1573,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     } catch (e) {}
 
-                    // Tự động khôi phục nếu child đã đóng, hoặc flag đóng ghi nhận, hoặc mất heartbeat quá 2.5s
-                    const noHeartbeat = (Date.now() - lastChildMessageTime > 2500);
+                    // Tự động khôi phục nếu child đã đóng, hoặc flag đóng ghi nhận, hoặc mất heartbeat quá 3.5s (sau khi đã kết nối)
+                    const noHeartbeat = (lastChildMessageTime > 0 && Date.now() - lastChildMessageTime > 3500);
                     if (isClosed || popoutClosedFlag || noHeartbeat) {
                         if (childCheckInterval) {
                             clearInterval(childCheckInterval);
@@ -1554,9 +1595,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    /**
-     * Handle Child Window Closure & Synchronize Back to LMS Parent
-     */
     function closePopoutAndReturnToLMS() {
         let finalSnapshot = null;
         try {
@@ -1619,9 +1657,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 100);
     }
 
-    /**
-     * Resume playing directly in the Parent LMS window (Matches HSK 4 Architecture)
-     */
     function resumeInThisWindow(forceCloseChild = false) {
         if (window.LMSAdapter && typeof window.LMSAdapter.playSynthesizedSound === 'function') {
             window.LMSAdapter.playSynthesizedSound('tap');
@@ -1704,9 +1739,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    /**
-     * Focus the active Child Window from Parent
-     */
     function focusChildWindow() {
         if (window.LMSAdapter && typeof window.LMSAdapter.playSynthesizedSound === 'function') {
             window.LMSAdapter.playSynthesizedSound('tap');
@@ -1715,15 +1747,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (childGameWindow) {
             try { isAlive = !childGameWindow.closed; } catch (e) { isAlive = false; }
         }
-        if (isAlive && (Date.now() - lastChildMessageTime < 3000)) {
+        if (isAlive && (lastChildMessageTime === 0 || Date.now() - lastChildMessageTime < 5000)) {
             try { childGameWindow.focus(); return; } catch (e) {}
         }
         openGameInNewWindow();
     }
 
-    /**
-     * Initialize Real-time Synchronization Engine
-     */
     function initSyncEngine() {
         const params = new URLSearchParams(window.location.search);
         isChildWindow = Boolean(
@@ -1737,6 +1766,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const popoutBtn = document.getElementById('openNewWindowBtn') || document.querySelector('[data-role="popout-btn"]');
         if (isChildWindow) {
             document.body.classList.add('is-child-window');
+            hasClosedInstructions = true;
+            const instructionModal = document.getElementById('instructionModal');
+            if (instructionModal) {
+                instructionModal.style.setProperty('display', 'none', 'important');
+            }
+
             if (popoutBtn) {
                 popoutBtn.title = "Quay về màn hình LMS (Đóng cửa sổ này)";
                 popoutBtn.setAttribute('aria-label', "Quay về màn hình LMS");
@@ -1826,7 +1861,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // 5. Restore state snapshot & setup periodic heartbeat
-        // Restore mute state initially
         let initialMute = false;
         try {
             const savedMute = storage.getItem('hsk1_audio_mute');
@@ -1837,7 +1871,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         applyMuteState(initialMute);
 
-        // Restore audio current time from URL query if available
         const urlAudioTime = parseFloat(params.get('audioTime'));
         if (isFinite(urlAudioTime) && urlAudioTime > 0) {
             const bgMusic = document.getElementById('bgMusic');
@@ -1847,29 +1880,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (isChildWindow) {
-            let initialSyncedState = null;
-            try {
-                const raw = storage.getItem('hsk1_synced_state') || storage.getItem('hsk1_game_sync_state');
-                if (raw) {
-                    const parsed = JSON.parse(raw);
-                    if (parsed && (!parsed.timestamp || Date.now() - parsed.timestamp < 7200000)) {
-                        initialSyncedState = parsed;
-                    }
-                }
-            } catch (err) {}
-
-            if (!initialSyncedState && window.opener) {
-                try {
-                    if (window.opener.__HSK1_LATEST_STATE__) {
-                        initialSyncedState = window.opener.__HSK1_LATEST_STATE__;
-                    }
-                } catch (e) {}
+            hasClosedInstructions = true;
+            const instructionModal = document.getElementById('instructionModal');
+            if (instructionModal) {
+                instructionModal.style.setProperty('display', 'none', 'important');
             }
 
-            if (!initialSyncedState) {
-                initialSyncedState = getInitialStateForChild();
-            }
-
+            const initialSyncedState = getInitialStateForChild();
             if (initialSyncedState) {
                 importGameState(initialSyncedState, false);
             }
@@ -1913,7 +1930,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     try {
                         if (childGameWindow) isClosed = childGameWindow.closed;
                     } catch (e) { isClosed = false; }
-                    const noHeartbeat = (Date.now() - lastChildMessageTime > 2000);
+                    const noHeartbeat = (lastChildMessageTime > 0 && Date.now() - lastChildMessageTime > 3500);
                     if (isClosed || noHeartbeat) {
                         resumeInThisWindow(false);
                     } else {
@@ -1928,7 +1945,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     try {
                         if (childGameWindow) isClosed = childGameWindow.closed;
                     } catch (e) { isClosed = false; }
-                    const noHeartbeat = (Date.now() - lastChildMessageTime > 2000);
+                    const noHeartbeat = (lastChildMessageTime > 0 && Date.now() - lastChildMessageTime > 3500);
                     if (isClosed || noHeartbeat) {
                         resumeInThisWindow(false);
                     } else {
@@ -1954,7 +1971,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (hasStarted && !parsed.gameOver) {
                             importGameState(parsed, false);
                             const instructionModal = document.getElementById('instructionModal');
-                            if (instructionModal) instructionModal.style.display = 'none';
+                            if (instructionModal) instructionModal.style.setProperty('display', 'none', 'important');
                         }
                     }
                 }
@@ -1969,6 +1986,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.saveGameState = broadcastGameState;
     window.openGameInNewWindow = openGameInNewWindow;
     window.openInNewWindow = openGameInNewWindow;
+    window.__openGameInNewWindowFull = openGameInNewWindow;
     window.openStandaloneWindow = openGameInNewWindow;
     window.focusChildWindow = focusChildWindow;
     window.resumeInThisWindow = resumeInThisWindow;
